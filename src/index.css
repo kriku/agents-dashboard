@@ -1,0 +1,310 @@
+:root {
+  --color-primary: #534AB7;
+  --color-success: #1D9E75;
+  --color-danger: #E24B4A;
+  --color-warning: #BA7517;
+  --color-orange: #D85A30;
+  --color-pink: #D4537E;
+
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666;
+  --color-text-tertiary: #999;
+
+  --color-bg-primary: #fff;
+  --color-bg-secondary: #f7f7f7;
+  --color-bg-tertiary: #f0f0f0;
+  --color-border: #e0e0e0;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App Shell ─────────────────────────────────────────────────── */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg-primary);
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-header__logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--color-primary);
+}
+
+.app-header__name {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.app-header__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot--live {
+  background: var(--color-success);
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────── */
+
+.app-sidebar {
+  width: 200px;
+  border-right: 0.5px solid var(--color-border);
+  padding: 12px 0;
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.app-sidebar__section-label {
+  padding: 0 12px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.app-sidebar__link {
+  display: block;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.app-sidebar__link:hover {
+  background: var(--color-bg-primary);
+}
+
+.app-sidebar__link--active {
+  font-weight: 500;
+  background: var(--color-bg-primary);
+  border-left-color: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+/* ── Main content ──────────────────────────────────────────────── */
+
+.app-main {
+  flex: 1;
+  padding: 20px 24px;
+  overflow: auto;
+  background: var(--color-bg-tertiary);
+}
+
+/* ── View page ─────────────────────────────────────────────────── */
+
+.view-page__header {
+  margin-bottom: 16px;
+}
+
+.view-page__header h1 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.view-page__header p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.view-page__refresh {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.view-page__row {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.view-page__row[data-cols="1"] { grid-template-columns: 1fr; }
+.view-page__row[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+.view-page__row[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
+.view-page__row[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
+
+/* ── Panel card ────────────────────────────────────────────────── */
+
+.panel-card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 0.5px solid var(--color-border);
+}
+
+.panel-card__title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.panel-card__skeleton {
+  height: 120px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Stat chart ────────────────────────────────────────────────── */
+
+.stat-chart {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Chart containers ──────────────────────────────────────────── */
+
+.chart-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+}
+
+/* ── Table chart ───────────────────────────────────────────────── */
+
+.table-chart {
+  overflow-x: auto;
+}
+
+.table-chart table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table-chart th {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.table-chart td {
+  padding: 8px 12px;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.table-chart tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Error state ───────────────────────────────────────────────── */
+
+.view-page--error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--color-danger);
+}
+
+.view-page--error h1 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.view-page--error p {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    display: none;
+  }
+
+  .view-page__row[data-cols="4"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .view-page__row[data-cols="2"],
+  .view-page__row[data-cols="3"] {
+    grid-template-columns: 1fr;
+  }
+}
