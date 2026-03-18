@@ -1,0 +1,127 @@
+<div style="font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif); color: var(--color-text-primary, #1a1a1a); background: var(--color-background-tertiary, #f0f0f0); border: 0.5px solid var(--color-border-tertiary, #e0e0e0); border-radius: var(--border-radius-lg, 12px); padding: 20px 24px;">
+  <div style="margin-bottom: 16px;">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 0 0 4px;">LLM token usage</h2>
+    <p style="font-size: 13px; color: var(--color-text-secondary, #666); margin: 0;">Token consumption, model distribution, and cost attribution &middot; Refreshes every 60s</p>
+  </div>
+
+  <!-- Row 1: Stats -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Total tokens (24h)</div>
+      <div style="font-size: 26px; font-weight: 500;">14.8M</div>
+      <div style="font-size: 11px; color: var(--color-text-secondary, #666); margin-top: 2px;">9.2M prompt + 5.6M completion</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Token rate</div>
+      <div style="font-size: 26px; font-weight: 500;">171/s</div>
+      <div style="font-size: 11px; color: var(--color-text-success, #1D9E75); margin-top: 2px;">&#9650; 12% from yesterday</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Estimated cost (24h)</div>
+      <div style="font-size: 26px; font-weight: 500;">$284</div>
+      <div style="font-size: 11px; color: var(--color-text-warning, #BA7517); margin-top: 2px;">&#9650; $32 over budget</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Avg tokens / invocation</div>
+      <div style="font-size: 26px; font-weight: 500;">307</div>
+      <div style="font-size: 11px; color: var(--color-text-secondary, #666); margin-top: 2px;">191 prompt + 116 completion</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Tokens by model + prompt/completion split -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Tokens by model</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">tokens/s &middot; 24h &middot; stacked</div>
+      <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">200</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">150</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">100</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">50</text>
+        <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <!-- gpt-4o area (bottom fill) -->
+        <polygon fill="#534AB7" opacity="0.15" points="24,100 60,100 96,100 132,100 168,100 204,100 240,100 276,100 312,100 312,60 276,58 240,55 204,52 168,50 132,55 96,58 60,60 24,62"/>
+        <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="24,62 60,60 96,58 132,55 168,50 204,52 240,55 276,58 312,60"/>
+        <!-- claude-sonnet area -->
+        <polygon fill="#1D9E75" opacity="0.15" points="24,62 60,60 96,58 132,55 168,50 204,52 240,55 276,58 312,60 312,38 276,35 240,32 204,30 168,26 132,32 96,35 60,38 24,40"/>
+        <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,40 60,38 96,35 132,32 168,26 204,30 240,32 276,35 312,38"/>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
+      </svg>
+      <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+        <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>gpt-4o</span>
+        <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>claude-sonnet</span>
+      </div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Prompt vs completion tokens</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">tokens/s &middot; 24h</div>
+      <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">120</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">90</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">60</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">30</text>
+        <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <polyline fill="none" stroke="#185FA5" stroke-width="1.5" points="24,45 60,42 96,40 132,38 168,32 204,35 240,38 276,40 312,42"/>
+        <polyline fill="none" stroke="#D4537E" stroke-width="1.5" points="24,72 60,70 96,68 132,65 168,58 204,62 240,65 276,68 312,70"/>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
+      </svg>
+      <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+        <span><span style="display:inline-block;width:8px;height:2px;background:#185FA5;margin-right:4px;vertical-align:middle;"></span>prompt</span>
+        <span><span style="display:inline-block;width:8px;height:2px;background:#D4537E;margin-right:4px;vertical-align:middle;"></span>completion</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Cost by model (bar) + Top consumers (table) -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Cost by model</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">USD &middot; 24h</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">gpt-4o</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 62%; height: 100%; background: #534AB7; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$176</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">claude-sonnet</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 30%; height: 100%; background: #1D9E75; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$85</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">gpt-4o-mini</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 8%; height: 100%; background: #D85A30; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$23</span>
+        </div>
+      </div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Top token consumers</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">table &middot; by agent &middot; 24h</div>
+      <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+        <thead><tr style="border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <th style="text-align: left; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary, #666);">Agent</th>
+          <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary, #666);">Tokens</th>
+          <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary, #666);">Cost</th>
+          <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary, #666);">% Total</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0);"><td style="padding: 6px 0;">support-bot</td><td style="text-align: right; padding: 6px 0;">6.1M</td><td style="text-align: right; padding: 6px 0;">$122</td><td style="text-align: right; padding: 6px 0;">41%</td></tr>
+          <tr style="border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0);"><td style="padding: 6px 0;">order-processor</td><td style="text-align: right; padding: 6px 0;">4.3M</td><td style="text-align: right; padding: 6px 0;">$86</td><td style="text-align: right; padding: 6px 0;">29%</td></tr>
+          <tr style="border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0);"><td style="padding: 6px 0;">data-enricher</td><td style="text-align: right; padding: 6px 0;">2.8M</td><td style="text-align: right; padding: 6px 0;">$52</td><td style="text-align: right; padding: 6px 0;">19%</td></tr>
+          <tr><td style="padding: 6px 0;">doc-analyzer</td><td style="text-align: right; padding: 6px 0;">1.6M</td><td style="text-align: right; padding: 6px 0;">$24</td><td style="text-align: right; padding: 6px 0;">11%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

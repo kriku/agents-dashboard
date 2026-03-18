@@ -1,0 +1,196 @@
+<div style="font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif); color: var(--color-text-primary, #1a1a1a); border: 0.5px solid var(--color-border-tertiary, #e0e0e0); border-radius: var(--border-radius-lg, 12px); overflow: hidden;">
+  <!-- Top bar -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0); background: var(--color-background-primary, #fff);">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 28px; height: 28px; border-radius: 6px; background: #534AB7; display: flex; align-items: center; justify-content: center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="#fff" stroke-width="1.5"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span style="font-weight: 500; font-size: 15px;">AgentWatch</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--color-text-secondary, #666);">
+      <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; display: inline-block;"></span> Live</span>
+      <span>Acme Corp</span>
+      <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-background-info, #E6F1FB); display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 12px; color: var(--color-text-info, #185FA5);">JD</div>
+    </div>
+  </div>
+
+  <div style="display: flex; min-height: 620px;">
+    <!-- Sidebar -->
+    <div style="width: 200px; border-right: 0.5px solid var(--color-border-tertiary, #e0e0e0); padding: 12px 0; background: var(--color-background-secondary, #f7f7f7); flex-shrink: 0;">
+      <div style="padding: 0 12px; margin-bottom: 8px; font-size: 11px; font-weight: 500; color: var(--color-text-tertiary, #999); text-transform: uppercase; letter-spacing: 0.5px;">Views</div>
+      <div style="padding: 8px 16px; font-size: 13px; font-weight: 500; background: var(--color-background-primary, #fff); border-left: 2px solid #534AB7; color: var(--color-text-primary, #1a1a1a);">Agent overview</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary, #666);">Tool call performance</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary, #666);">LLM token usage</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary, #666);">Error breakdown</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary, #666);">Cost tracking</div>
+    </div>
+
+    <!-- Main content -->
+    <div style="flex: 1; padding: 20px 24px; overflow: auto; background: var(--color-background-tertiary, #f0f0f0);">
+      <div style="margin-bottom: 16px;">
+        <h2 style="font-size: 18px; font-weight: 500; margin: 0 0 4px;">Agent execution overview</h2>
+        <p style="font-size: 13px; color: var(--color-text-secondary, #666); margin: 0;">Real-time view of agent health, error rates, and execution performance &middot; Refreshes every 30s</p>
+      </div>
+
+      <!-- Row 1: Stat cards -->
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Active agents</div>
+          <div style="font-size: 26px; font-weight: 500;">12</div>
+          <div style="font-size: 11px; color: var(--color-text-success, #1D9E75); margin-top: 2px;">&#9650; 2 from yesterday</div>
+        </div>
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Total invocations (24h)</div>
+          <div style="font-size: 26px; font-weight: 500;">48.2K</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary, #666); margin-top: 2px;">~33.5 req/s avg</div>
+        </div>
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Error rate (current)</div>
+          <div style="font-size: 26px; font-weight: 500; color: var(--color-text-danger, #E24B4A);">2.3%</div>
+          <div style="font-size: 11px; color: var(--color-text-danger, #E24B4A); margin-top: 2px;">&#9650; 0.8% from baseline</div>
+        </div>
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">p95 latency (current)</div>
+          <div style="font-size: 26px; font-weight: 500;">1.82s</div>
+          <div style="font-size: 11px; color: var(--color-text-success, #1D9E75); margin-top: 2px;">&#9660; 0.3s improved</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Two time-series charts -->
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+        <!-- Invocation rate chart -->
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Invocation rate</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">req/s &middot; 24h &middot; by agent</div>
+          <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+            <!-- Y axis -->
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">40</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">30</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">20</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">10</text>
+            <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <!-- Series: order-processor -->
+            <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="24,55 60,50 96,52 132,45 168,38 204,42 240,35 276,30 312,28"/>
+            <!-- Series: support-bot -->
+            <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,72 60,70 96,68 132,65 168,60 204,58 240,55 276,52 312,50"/>
+            <!-- Series: data-enricher -->
+            <polyline fill="none" stroke="#D85A30" stroke-width="1.5" points="24,88 60,85 96,82 132,80 168,78 204,82 240,80 276,78 312,75"/>
+            <!-- X axis labels -->
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="130" y="116">08:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
+          </svg>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+            <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>order-processor</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>support-bot</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D85A30;margin-right:4px;vertical-align:middle;"></span>data-enricher</span>
+          </div>
+        </div>
+        <!-- Error rate chart -->
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Error rate</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">% &middot; 24h &middot; aggregate</div>
+          <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">5%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">3%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">2%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">1%</text>
+            <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <!-- Error rate line (with a spike) -->
+            <polyline fill="none" stroke="#E24B4A" stroke-width="1.5" points="24,78 60,80 96,75 132,72 168,40 204,55 240,65 276,60 312,58"/>
+            <!-- Threshold line -->
+            <line x1="20" y1="40" x2="320" y2="40" stroke="#E24B4A" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.5"/>
+            <text style="font-size:9px;fill:#E24B4A" x="268" y="36">threshold 3%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="130" y="116">08:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
+          </svg>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+            <span><span style="display:inline-block;width:8px;height:2px;background:#E24B4A;margin-right:4px;vertical-align:middle;"></span>error %</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Bar chart + Latency -->
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+        <!-- Errors by type (bar) -->
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Errors by type</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">count &middot; 24h</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">LLM timeout</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;">
+                <div style="width: 72%; height: 100%; background: #E24B4A; border-radius: 3px; opacity: 0.8;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 36px;">342</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">Tool failure</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;">
+                <div style="width: 48%; height: 100%; background: #D85A30; border-radius: 3px; opacity: 0.8;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 36px;">228</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">Rate limited</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;">
+                <div style="width: 30%; height: 100%; background: #BA7517; border-radius: 3px; opacity: 0.8;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 36px;">142</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">Max iterations</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;">
+                <div style="width: 15%; height: 100%; background: #534AB7; border-radius: 3px; opacity: 0.8;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 36px;">71</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">Guardrail</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;">
+                <div style="width: 8%; height: 100%; background: #D4537E; border-radius: 3px; opacity: 0.8;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 36px;">38</span>
+            </div>
+          </div>
+        </div>
+        <!-- p95 latency time-series -->
+        <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Execution latency (p95)</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">seconds &middot; 24h &middot; by agent</div>
+          <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">4s</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">3s</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">2s</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">1s</text>
+            <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+            <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="24,68 60,65 96,62 132,70 168,55 204,50 240,52 276,48 312,45"/>
+            <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,82 60,80 96,78 132,85 168,75 204,72 240,70 276,68 312,65"/>
+            <polyline fill="none" stroke="#D85A30" stroke-width="1.5" points="24,60 60,58 96,55 132,62 168,48 204,42 240,45 276,40 312,38"/>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="130" y="116">08:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
+          </svg>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+            <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>order-processor</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>support-bot</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D85A30;margin-right:4px;vertical-align:middle;"></span>data-enricher</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

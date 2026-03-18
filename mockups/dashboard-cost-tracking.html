@@ -1,0 +1,147 @@
+<div style="font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif); color: var(--color-text-primary, #1a1a1a); background: var(--color-background-tertiary, #f0f0f0); border: 0.5px solid var(--color-border-tertiary, #e0e0e0); border-radius: var(--border-radius-lg, 12px); padding: 20px 24px;">
+  <div style="margin-bottom: 16px;">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 0 0 4px;">Cost tracking</h2>
+    <p style="font-size: 13px; color: var(--color-text-secondary, #666); margin: 0;">Estimated LLM spend by agent, model, and invocation &middot; Refreshes every 5m</p>
+  </div>
+
+  <!-- Row 1: Stats -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Daily cost (today)</div>
+      <div style="font-size: 26px; font-weight: 500;">$284</div>
+      <div style="font-size: 11px; color: var(--color-text-warning, #BA7517); margin-top: 2px;">Budget: $250/day</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Projected monthly</div>
+      <div style="font-size: 26px; font-weight: 500; color: var(--color-text-danger, #E24B4A);">$8,520</div>
+      <div style="font-size: 11px; color: var(--color-text-danger, #E24B4A); margin-top: 2px;">$1,020 over budget</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Cost per invocation</div>
+      <div style="font-size: 26px; font-weight: 500;">$0.006</div>
+      <div style="font-size: 11px; color: var(--color-text-success, #1D9E75); margin-top: 2px;">&#9660; 8% optimized</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Week-over-week</div>
+      <div style="font-size: 26px; font-weight: 500;">+14%</div>
+      <div style="font-size: 11px; color: var(--color-text-warning, #BA7517); margin-top: 2px;">Driven by support-bot</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Cost trend + cost per invocation trend -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Daily cost trend</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">USD &middot; 7d</div>
+      <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">$350</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">$300</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">$250</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">$200</text>
+        <line x1="28" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <!-- Budget line at $250 -->
+        <line x1="28" y1="70" x2="320" y2="70" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.6"/>
+        <text style="font-size:9px;fill:#BA7517" x="270" y="66">budget $250</text>
+        <!-- Bar chart (7 days) -->
+        <rect x="46" y="82" width="28" height="18" rx="2" fill="#1D9E75" opacity="0.7"/>
+        <rect x="86" y="78" width="28" height="22" rx="2" fill="#1D9E75" opacity="0.7"/>
+        <rect x="126" y="72" width="28" height="28" rx="2" fill="#BA7517" opacity="0.7"/>
+        <rect x="166" y="62" width="28" height="38" rx="2" fill="#BA7517" opacity="0.7"/>
+        <rect x="206" y="55" width="28" height="45" rx="2" fill="#E24B4A" opacity="0.7"/>
+        <rect x="246" y="50" width="28" height="50" rx="2" fill="#E24B4A" opacity="0.7"/>
+        <rect x="286" y="45" width="28" height="55" rx="2" fill="#E24B4A" opacity="0.7"/>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="55" y="116" text-anchor="middle">Mon</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="100" y="116" text-anchor="middle">Tue</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="140" y="116" text-anchor="middle">Wed</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="180" y="116" text-anchor="middle">Thu</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="220" y="116" text-anchor="middle">Fri</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="260" y="116" text-anchor="middle">Sat</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116" text-anchor="middle">Today</text>
+      </svg>
+      <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+        <span><span style="display:inline-block;width:8px;height:8px;background:#1D9E75;border-radius:2px;margin-right:4px;vertical-align:middle;opacity:0.7;"></span>Under budget</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:#BA7517;border-radius:2px;margin-right:4px;vertical-align:middle;opacity:0.7;"></span>Near budget</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:#E24B4A;border-radius:2px;margin-right:4px;vertical-align:middle;opacity:0.7;"></span>Over budget</span>
+      </div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Cost per invocation</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">USD &middot; 7d &middot; by agent</div>
+      <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="12">$0.02</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="42">$0.015</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="72">$0.01</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="0" y="102">$0.005</text>
+        <line x1="28" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <line x1="28" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
+        <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="46,58 86,55 126,52 166,48 206,45 246,42 286,40"/>
+        <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="46,78 86,75 126,72 166,70 206,68 246,72 286,70"/>
+        <polyline fill="none" stroke="#D85A30" stroke-width="1.5" points="46,90 86,88 126,85 166,82 206,80 246,82 286,80"/>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="46" y="116">Mon</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="166" y="116">Thu</text>
+        <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="286" y="116">Today</text>
+      </svg>
+      <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary, #666);">
+        <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>support-bot</span>
+        <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>order-processor</span>
+        <span><span style="display:inline-block;width:8px;height:2px;background:#D85A30;margin-right:4px;vertical-align:middle;"></span>data-enricher</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Cost by agent + cost by model -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Cost by agent</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">USD &middot; today</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">support-bot</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 43%; height: 100%; background: #534AB7; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$122</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">order-processor</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 30%; height: 100%; background: #1D9E75; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$86</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">data-enricher</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 18%; height: 100%; background: #D85A30; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$52</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">doc-analyzer</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 8%; height: 100%; background: #D4537E; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$24</span>
+        </div>
+      </div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Cost by model</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">USD &middot; today</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">gpt-4o</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 62%; height: 100%; background: #534AB7; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$176</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">claude-sonnet</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 30%; height: 100%; background: #1D9E75; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$85</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 90px; text-align: right;">gpt-4o-mini</span>
+          <div style="flex: 1; height: 18px; background: var(--color-background-secondary, #f7f7f7); border-radius: 3px; overflow: hidden;"><div style="width: 8%; height: 100%; background: #D85A30; border-radius: 3px; opacity: 0.8;"></div></div>
+          <span style="font-size: 11px; color: var(--color-text-secondary, #666); width: 40px;">$23</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
