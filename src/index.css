@@ -173,9 +173,9 @@ body {
 }
 
 .view-page__row[data-cols="1"] { grid-template-columns: 1fr; }
-.view-page__row[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
-.view-page__row[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
-.view-page__row[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
+.view-page__row[data-cols="2"] { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.view-page__row[data-cols="3"] { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.view-page__row[data-cols="4"] { grid-template-columns: repeat(4, minmax(0,1fr)); }
 
 /* ── Panel card ────────────────────────────────────────────────── */
 
@@ -189,7 +189,7 @@ body {
 .panel-card__title {
   font-size: 13px;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .panel-card__skeleton {
@@ -208,19 +208,18 @@ body {
 /* ── Stat chart ────────────────────────────────────────────────── */
 
 .stat-chart {
-  text-align: center;
-  padding: 8px 0;
+  padding: 14px 16px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
 }
 
 .stat-value {
   font-size: 26px;
   font-weight: 500;
-}
-
-.stat-label {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  margin-top: 4px;
 }
 
 /* ── Chart containers ──────────────────────────────────────────── */
@@ -239,6 +238,50 @@ body {
   font-size: 13px;
 }
 
+/* ── Bar chart ────────────────────────────────────────────────── */
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-chart__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar-chart__label {
+  width: 90px;
+  font-size: 11px;
+  text-align: right;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-chart__track {
+  flex: 1;
+  height: 18px;
+  background: var(--color-bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-chart__fill {
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.8;
+}
+
+.bar-chart__value {
+  width: 36px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
 /* ── Table chart ───────────────────────────────────────────────── */
 
 .table-chart {
@@ -253,17 +296,15 @@ body {
 
 .table-chart th {
   text-align: left;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--color-border);
   font-weight: 500;
   color: var(--color-text-secondary);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  font-size: 12px;
 }
 
 .table-chart td {
-  padding: 8px 12px;
+  padding: 6px 0;
   border-bottom: 0.5px solid var(--color-border);
 }
 
@@ -300,7 +341,7 @@ body {
   }
 
   .view-page__row[data-cols="4"] {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0,1fr));
   }
 
   .view-page__row[data-cols="2"],

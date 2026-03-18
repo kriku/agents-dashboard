@@ -36,8 +36,24 @@ describe('StatChart', () => {
     expect(screen.getByText('--')).toBeInTheDocument();
   });
 
-  it('renders metric label', () => {
+  it('renders metric label when no title', () => {
     render(<StatChart data={vectorData('42', { agent_name: 'order-processor' })} unit="short" />);
     expect(screen.getByText('order-processor')).toBeInTheDocument();
+  });
+
+  it('renders title prop as label instead of metric', () => {
+    render(<StatChart data={vectorData('42', { agent_name: 'order-processor' })} unit="short" title="Active Agents" />);
+    expect(screen.getByText('Active Agents')).toBeInTheDocument();
+    expect(screen.queryByText('order-processor')).not.toBeInTheDocument();
+  });
+
+  it('renders label before value', () => {
+    const { container } = render(<StatChart data={vectorData('42')} unit="short" title="My Stat" />);
+    const label = container.querySelector('.stat-label');
+    const value = container.querySelector('.stat-value');
+    expect(label).toBeInTheDocument();
+    expect(value).toBeInTheDocument();
+    // Label should come before value in DOM
+    expect(label!.compareDocumentPosition(value!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 });

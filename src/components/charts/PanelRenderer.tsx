@@ -15,7 +15,7 @@ export function PanelRenderer({ panel }: PanelRendererProps) {
     case 'timeseries':
       return <TimeSeriesChart data={panel.data} unit={panel.unit} />;
     case 'stat':
-      return <StatChart data={panel.data} unit={panel.unit} />;
+      return <StatChart data={panel.data} unit={panel.unit} title={panel.title} />;
     case 'gauge':
       return <GaugeChart data={panel.data} unit={panel.unit} />;
     case 'heatmap':

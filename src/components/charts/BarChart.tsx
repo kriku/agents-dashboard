@@ -1,4 +1,3 @@
-import ReactECharts from 'echarts-for-react';
 import type { PanelData, PanelUnit, VectorResult } from '../../types/views';
 import { formatValue } from '../../utils/formatters';
 
@@ -15,34 +14,29 @@ export function BarChart({ data, unit }: BarChartProps) {
   }
 
   const results = data.result as VectorResult[];
-  const categories = results.map((r) => Object.values(r.metric).join(' '));
   const values = results.map((r) => Number(r.value[1]));
+  const maxValue = Math.max(...values);
 
-  const option = {
-    tooltip: {
-      trigger: 'axis' as const,
-      formatter: (params: Array<{ name: string; value: number }>) => {
-        const p = params[0];
-        return p ? `${p.name}: ${formatValue(p.value, unit)}` : '';
-      },
-    },
-    grid: { left: 100, right: 20, top: 10, bottom: 30 },
-    xAxis: { type: 'value' as const },
-    yAxis: {
-      type: 'category' as const,
-      data: categories,
-      inverse: true,
-    },
-    series: [
-      {
-        type: 'bar',
-        data: values.map((v, i) => ({
-          value: v,
-          itemStyle: { color: COLORS[i % COLORS.length] },
-        })),
-      },
-    ],
-  };
+  return (
+    <div className="bar-chart">
+      {results.map((r, i) => {
+        const label = Object.values(r.metric).join(' ');
+        const val = values[i];
+        const pct = maxValue > 0 ? (val / maxValue) * 100 : 0;
 
-  return <ReactECharts option={option} style={{ height: Math.max(200, results.length * 40) }} />;
+        return (
+          <div className="bar-chart__row" key={i}>
+            <span className="bar-chart__label">{label}</span>
+            <div className="bar-chart__track">
+              <div
+                className="bar-chart__fill"
+                style={{ width: `${pct}%`, background: COLORS[i % COLORS.length] }}
+              />
+            </div>
+            <span className="bar-chart__value">{formatValue(val, unit)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
 }

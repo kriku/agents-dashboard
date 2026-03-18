@@ -26,11 +26,18 @@ describe('PanelCard', () => {
     expect(container.querySelector('.panel-card--loading')).toBeInTheDocument();
   });
 
-  it('displays panel title', () => {
+  it('displays panel title for non-stat panels', () => {
+    const panels = [makeBarPanel({ id: 'x', title: 'Error Types' })];
+    render(<PanelCard panelId="x" panels={panels} loading={false} />);
+    const titleEl = document.querySelector('.panel-card__title');
+    expect(titleEl).toHaveTextContent('Error Types');
+  });
+
+  it('hides panel title for stat panels', () => {
     const panels = [makeStatPanel({ id: 'x', title: 'Active Agents' })];
     render(<PanelCard panelId="x" panels={panels} loading={false} />);
     const titleEl = document.querySelector('.panel-card__title');
-    expect(titleEl).toHaveTextContent('Active Agents');
+    expect(titleEl).toBeNull();
   });
 
   it('sets data attributes', () => {

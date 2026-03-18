@@ -1,24 +1,17 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-
-vi.mock('echarts-for-react', () => ({
-  default: (props: any) => (
-    <div data-testid="echarts" data-option={JSON.stringify(props.option)} style={props.style} />
-  ),
-}));
 
 import { BarChart } from '../BarChart';
 import { makeBarPanel } from '../../../__fixtures__/factories';
 import type { PanelData } from '../../../types/views';
 
 describe('BarChart', () => {
-  it('passes categories and values to ECharts', () => {
+  it('renders labels and values for each bar', () => {
     const panel = makeBarPanel();
     render(<BarChart data={panel.data} unit={panel.unit} />);
-    const el = screen.getByTestId('echarts');
-    const option = JSON.parse(el.getAttribute('data-option')!);
-    expect(option.yAxis.data).toEqual(['A', 'B', 'C']);
-    expect(option.series[0].data).toHaveLength(3);
+    expect(screen.getByText('A')).toBeInTheDocument();
+    expect(screen.getByText('B')).toBeInTheDocument();
+    expect(screen.getByText('C')).toBeInTheDocument();
   });
 
   it('renders placeholder for empty data', () => {
@@ -27,20 +20,22 @@ describe('BarChart', () => {
     expect(screen.getByText('No data')).toBeInTheDocument();
   });
 
-  it('sets dynamic height based on item count', () => {
+  it('renders bar fills with correct widths', () => {
     const panel = makeBarPanel();
-    render(<BarChart data={panel.data} unit={panel.unit} />);
-    const el = screen.getByTestId('echarts');
-    // 3 items × 40 = 120, but min 200
-    expect(el.style.height).toBe('200px');
+    const { container } = render(<BarChart data={panel.data} unit={panel.unit} />);
+    const fills = container.querySelectorAll('.bar-chart__fill');
+    expect(fills).toHaveLength(3);
+    // First item (100) is max → 100%, second (75) → 75%, third (50) → 50%
+    expect(fills[0]).toHaveStyle({ width: '100%' });
+    expect(fills[1]).toHaveStyle({ width: '75%' });
+    expect(fills[2]).toHaveStyle({ width: '50%' });
   });
 
   it('applies per-item colors', () => {
     const panel = makeBarPanel();
-    render(<BarChart data={panel.data} unit={panel.unit} />);
-    const el = screen.getByTestId('echarts');
-    const option = JSON.parse(el.getAttribute('data-option')!);
-    const colors = option.series[0].data.map((d: any) => d.itemStyle.color);
+    const { container } = render(<BarChart data={panel.data} unit={panel.unit} />);
+    const fills = container.querySelectorAll('.bar-chart__fill');
+    const colors = Array.from(fills).map((f) => (f as HTMLElement).style.background);
     // Each item has a distinct color
     expect(new Set(colors).size).toBe(3);
   });
