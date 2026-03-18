@@ -26,6 +26,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/__tests__/setup.ts'],
     include: ['src/**/__tests__/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['src/__tests__/e2e/**', 'node_modules'],
     coverage: {
       reporter: ['text', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],

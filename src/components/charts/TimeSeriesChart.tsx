@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react';
 import UplotReact from 'uplot-react';
 import uPlot from 'uplot';
 import 'uplot/dist/uPlot.min.css';
@@ -12,6 +13,20 @@ interface TimeSeriesChartProps {
 }
 
 export function TimeSeriesChart({ data, unit }: TimeSeriesChartProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width ?? 0;
+      if (w > 0) setWidth(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   if (data.resultType !== 'matrix' || data.result.length === 0) {
     return <div className="chart-empty">No data</div>;
   }
@@ -25,7 +40,7 @@ export function TimeSeriesChart({ data, unit }: TimeSeriesChartProps) {
   ];
 
   const opts: uPlot.Options = {
-    width: 0, // auto-sized by container
+    width,
     height: 240,
     cursor: { show: true },
     scales: {
@@ -48,8 +63,8 @@ export function TimeSeriesChart({ data, unit }: TimeSeriesChartProps) {
   };
 
   return (
-    <div className="chart-container">
-      <UplotReact options={opts} data={uplotData} />
+    <div className="chart-container" ref={containerRef}>
+      {width > 0 && <UplotReact options={opts} data={uplotData} />}
     </div>
   );
 }

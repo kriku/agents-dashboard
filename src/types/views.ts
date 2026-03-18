@@ -48,3 +48,39 @@ export interface ViewListItem {
   title: string;
   description: string;
 }
+
+// ---------------------------------------------------------------------------
+// Runtime validators / type guards
+// ---------------------------------------------------------------------------
+
+export const panelTypes: PanelType[] = ['timeseries', 'stat', 'gauge', 'heatmap', 'bar', 'table'];
+
+/** Runtime check that an unknown value is a valid Panel object */
+export function isPanel(value: unknown): value is Panel {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.id === 'string' &&
+    typeof v.title === 'string' &&
+    typeof v.type === 'string' &&
+    panelTypes.includes(v.type as PanelType) &&
+    typeof v.data === 'object' &&
+    v.data !== null
+  );
+}
+
+/** Runtime check that an unknown value is a valid ViewResponse */
+export function isViewResponse(value: unknown): value is ViewResponse {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as Record<string, unknown>;
+  if (typeof v.view !== 'object' || v.view === null) return false;
+  if (!Array.isArray(v.panels)) return false;
+  return v.panels.every(isPanel);
+}
+
+/** Runtime check that a PanelData is a metric result (vector or matrix) */
+export function isMetricResult(data: PanelData): data is
+  | { resultType: 'vector'; result: VectorResult[] }
+  | { resultType: 'matrix'; result: MatrixResult[] } {
+  return data.resultType === 'vector' || data.resultType === 'matrix';
+}
