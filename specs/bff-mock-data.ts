@@ -139,6 +139,38 @@ function stableSeries(
   });
 }
 
+/**
+ * Overlay a spike on an existing series.
+ * Multiplies values within [peakTime - rampUp, peakTime + rampDown] by a
+ * Gaussian-ish envelope that peaks at `multiplier`.
+ *
+ * @param values    Base series (modified in place for convenience, returns new array)
+ * @param peakTime  Unix epoch of spike apex
+ * @param multiplier How many × the base value at the peak (e.g. 5 = 5× normal)
+ * @param rampUp    Seconds before peak to start climbing (default 10 min)
+ * @param rampDown  Seconds after peak to finish decaying (default 20 min)
+ */
+function withSpike(
+  values: [number, string][],
+  peakTime: number,
+  multiplier: number,
+  rampUp = 10 * 60,
+  rampDown = 20 * 60,
+): [number, string][] {
+  return values.map(([t, v]) => {
+    let factor = 1;
+    if (t >= peakTime - rampUp && t <= peakTime + rampDown) {
+      // Normalised distance from peak: 0 at peak, 1 at edges
+      const dist = t < peakTime
+        ? (peakTime - t) / rampUp
+        : (t - peakTime) / rampDown;
+      // Gaussian-ish bell: e^(-3·d²) → ~0.05 at edges, 1 at center
+      factor = 1 + (multiplier - 1) * Math.exp(-3 * dist * dist);
+    }
+    return [t, (Number(v) * factor).toFixed(3)];
+  });
+}
+
 // ---------------------------------------------------------------------------
 // 3. VIEW LIST — GET /api/views
 // ---------------------------------------------------------------------------
@@ -281,7 +313,8 @@ export const mockAgentOverview: ViewResponse = {
           },
           {
             metric: { agent_name: "support-triage" },
-            values: stableSeries(ts24h, 3.2, 2.0),
+            // Spike ~2h ago: error rate jumped to ~5× for ~30 min
+            values: withSpike(stableSeries(ts24h, 3.2, 2.0), NOW - 2 * HOUR, 5),
           },
           {
             metric: { agent_name: "doc-summarizer" },
@@ -329,7 +362,8 @@ export const mockAgentOverview: ViewResponse = {
           },
           {
             metric: { agent_name: "support-triage" },
-            values: stableSeries(ts24h, 5.8, 1.5),
+            // Correlated latency spike ~2h ago
+            values: withSpike(stableSeries(ts24h, 5.8, 1.5), NOW - 2 * HOUR, 3),
           },
           {
             metric: { agent_name: "doc-summarizer" },
@@ -816,7 +850,8 @@ export const mockErrorBreakdown: ViewResponse = {
         result: [
           {
             metric: { aggregate: "all_agents" },
-            values: stableSeries(ts24h, 2.3, 1.0),
+            // Spike ~2h ago matching the support-triage incident
+            values: withSpike(stableSeries(ts24h, 2.3, 1.0), NOW - 2 * HOUR, 4),
           },
         ],
       },
@@ -832,7 +867,8 @@ export const mockErrorBreakdown: ViewResponse = {
         result: [
           {
             metric: { error_type: "timeout" },
-            values: stableSeries(ts24h, 0.30, 0.15),
+            // Timeout spike during the support-triage incident
+            values: withSpike(stableSeries(ts24h, 0.30, 0.15), NOW - 2 * HOUR, 8),
           },
           {
             metric: { error_type: "rate_limit" },
