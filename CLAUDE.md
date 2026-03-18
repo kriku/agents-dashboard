@@ -57,7 +57,6 @@ All data isolation is enforced at the **workspace** level via the `X-Scope-OrgID
 | Build tool | **Vite** | 6.x | Fast builds, native ESM |
 | Time-series charts | **uPlot** + `uplot-react` | 1.6.x | 50KB, 150K points in 34ms; same lib Grafana uses |
 | Complex charts | **Apache ECharts** + `echarts-for-react` | 5.5.x | Heatmaps, gauges, bar charts |
-| UI components | **Ant Design** | 5.x | Layout grid, cards, typography, navigation |
 | Data fetching | **TanStack Query** (React Query) | 5.x | Polling/refetch, stale-while-revalidate |
 | Routing | **React Router** | 7.x | View-based page navigation |
 
@@ -73,13 +72,23 @@ The BFF is a separate Go service (~1,500 LoC) that owns all PromQL queries, vali
 
 ```
 src/
+├── __tests__/
+│   ├── test-utils.tsx          # renderWithProviders(), mockViewEndpoint()
+│   └── e2e/                    # Playwright E2E tests
+├── __fixtures__/
+│   ├── factories.ts            # makeStatPanel(), makeTimeSeriesPanel(), etc.
+│   ├── views/                  # View-level fixture data
+│   ├── panels/                 # Panel-level fixture data
+│   └── errors/                 # Error response fixtures
 ├── api/
+│   ├── __tests__/              # API client unit tests
 │   ├── client.ts               # Base fetch wrapper with JWT injection
 │   └── views.ts                # Typed API: fetchView(), fetchPanel()
 ├── mocks/
 │   └── handlers.ts             # Mock data layer — imports from specs/bff-mock-data.ts
 ├── components/
 │   ├── charts/
+│   │   ├── __tests__/          # Chart component tests
 │   │   ├── TimeSeriesChart.tsx  # uPlot wrapper — "timeseries" panels
 │   │   ├── StatChart.tsx        # Single-value stat — "stat" panels
 │   │   ├── GaugeChart.tsx       # ECharts gauge — "gauge" panels
@@ -88,24 +97,35 @@ src/
 │   │   ├── TableChart.tsx       # Ant Design table — "table" panels
 │   │   └── PanelRenderer.tsx    # Routes panel.type → chart component
 │   └── layout/
+│       ├── __tests__/           # Layout component tests
 │       ├── AppShell.tsx         # Nav sidebar, header, auth state
 │       ├── ViewPage.tsx         # Generic view renderer
 │       └── PanelCard.tsx        # Card wrapper: title, skeleton, error
 ├── pages/
+│   ├── __tests__/              # Page integration tests
 │   ├── AgentOverview.tsx        # View: "agent-overview"
 │   ├── ToolCallPerformance.tsx  # View: "tool-call-performance"
 │   ├── LLMTokenUsage.tsx        # View: "llm-token-usage"
 │   ├── ErrorBreakdown.tsx       # View: "error-breakdown"
 │   └── CostTracking.tsx         # View: "cost-tracking"
 ├── hooks/
+│   ├── __tests__/              # Hook unit tests
 │   ├── useView.ts              # TanStack Query: fetch + poll a view
 │   └── useAuth.ts              # JWT management, token refresh
 ├── types/
+│   ├── __tests__/              # Type guard/validation tests
 │   └── views.ts                # TypeScript types matching BFF response
 └── utils/
+    ├── __tests__/              # Formatter unit tests (100% coverage target)
     └── formatters.ts           # Unit formatting (bytes, duration, rate, %)
 specs/
 └── bff-mock-data.ts            # Source of truth for mock data & response types
+mockups/
+├── dashboard-appshell-agent-overview.html  # AppShell + Agent Overview layout
+├── dashboard-cost-tracking.html            # Cost Tracking view
+├── dashboard-error-breakdown.html          # Error Breakdown view
+├── dashboard-llm-token-usage.html          # LLM Token Usage view
+└── dashboard-tool-call-performance.html    # Tool Call Performance view
 public/
 index.html
 vite.config.ts
@@ -343,6 +363,44 @@ The frontend handles JWT tokens for authentication. Key considerations:
 
 ---
 
+## Testing
+
+### Test Pyramid
+
+| Level | Count | Runner | Environment |
+|-------|-------|--------|-------------|
+| Unit | ~111 | Vitest | jsdom |
+| Integration | ~43 | Vitest + RTL + MSW | jsdom |
+| E2E | ~10 | Playwright | Chromium |
+
+### Tooling
+
+- **Vitest** — unit and integration tests (fast, Vite-native)
+- **React Testing Library (RTL)** — component rendering and interaction
+- **MSW (Mock Service Worker)** — API mocking at the network level
+- **Playwright** — end-to-end browser tests
+
+### File Conventions
+
+- **Test files**: `__tests__/` directories co-located with source (e.g., `src/components/charts/__tests__/`)
+- **Fixtures**: `src/__fixtures__/` for shared test data (views, panels, errors)
+- **Fixture factories** in `src/__fixtures__/factories.ts`: `makeStatPanel()`, `makeTimeSeriesPanel()`, `makeBarPanel()`, `makeViewResponse()`
+- **Shared test utilities** in `src/__tests__/test-utils.tsx`: `renderWithProviders()`, `mockViewEndpoint()`
+
+### Coverage Targets
+
+- **Overall**: 90%+ lines, 85%+ branches
+- **`utils/` and `types/`**: 100% lines and branches
+
+### Run Commands
+
+- `vitest run` — unit + integration tests
+- `playwright test` — E2E tests
+
+See `specs/dashboard-frontend-test-specifications.md` for detailed test case IDs and specifications.
+
+---
+
 ## What NOT to Build (Phase 1 Scope)
 
 These are explicitly deferred to future phases:
@@ -371,3 +429,5 @@ These documents in the project define the full system design:
 - `specs/bff-mock-data.ts` — Mock data with exact JSON response shapes (source of truth for frontend contracts and type definitions)
 - `specs/metrics-read-path-architecture.mermaid` — Dashboard read path diagram
 - `specs/metrics-write-path.mermaid` — Metrics ingestion pipeline diagram
+- `specs/dashboard-frontend-test-specifications.md` — Frontend test specifications: test pyramid, ~164 test cases (unit/integration/E2E), fixture factories, coverage targets
+- `mockups/*.html` — Static HTML mockups for all 5 dashboard views (AppShell layout, charts, grid structure)
