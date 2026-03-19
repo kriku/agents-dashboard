@@ -91,7 +91,6 @@ const NOW = Math.floor(Date.now() / 1000);
 const HOUR = 3600;
 const DAY = 86400;
 const STEP_1M = 60;
-const STEP_5M = 300;
 
 /** Generate timestamps from (now - rangeSec) to now at stepSec intervals */
 function timestamps(rangeSec: number, stepSec: number): number[] {
@@ -220,7 +219,6 @@ export const mockViewList: ViewListItem[] = [
 //               #46 guardrail.validation.result
 
 const ts24h = timestamps(DAY, STEP_1M);
-const ts5m = timestamps(5 * 60, STEP_1M);
 
 export const mockAgentOverview: ViewResponse = {
   view: {

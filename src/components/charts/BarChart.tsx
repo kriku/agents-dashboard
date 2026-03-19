@@ -21,7 +21,7 @@ export function BarChart({ data, unit }: BarChartProps) {
     <div className="bar-chart">
       {results.map((r, i) => {
         const label = Object.values(r.metric).join(' ');
-        const val = values[i];
+        const val = values[i] ?? 0;
         const pct = maxValue > 0 ? (val / maxValue) * 100 : 0;
 
         return (
