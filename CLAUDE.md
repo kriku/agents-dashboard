@@ -178,6 +178,7 @@ The frontend codes against this API surface. **Currently mocked** — response s
   "view": {
     "id": "agent-overview",
     "title": "Agent Execution Overview",
+    "description": "Real-time view of agent health, error rates, and execution performance",
     "refreshSec": 30
   },
   "panels": [
@@ -186,6 +187,7 @@ The frontend codes against this API surface. **Currently mocked** — response s
       "title": "Invocation Rate",
       "type": "timeseries",
       "unit": "reqps",
+      "subtitle": "req/s · 24h · by agent",
       "data": {
         "resultType": "matrix",
         "result": [
@@ -199,6 +201,8 @@ The frontend codes against this API surface. **Currently mocked** — response s
   ]
 }
 ```
+
+Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value). Valid `unit` values: `"reqps"`, `"seconds"`, `"bytes"`, `"percent"`, `"short"`, `"USD"`, `"tokens"`, `"tokps"`.
 
 ---
 

@@ -117,12 +117,16 @@ type PanelQuery struct {
 }
 
 type Panel struct {
-    ID       string        // e.g., "error_rate_by_agent"
-    Title    string        // "Error Rate by Agent"
-    Type     string        // "timeseries", "stat", "gauge", "heatmap", "bar", "table"
-    Unit     string        // "reqps", "seconds", "bytes", "percent", "short"
-    Queries  []PanelQuery  // One or more PromQL queries
-    TimeRange string       // "1h", "24h", "7d" — fixed per panel
+    ID            string        // e.g., "error_rate_by_agent"
+    Title         string        // "Error Rate by Agent"
+    Type          string        // "timeseries", "stat", "gauge", "heatmap", "bar", "table"
+    Unit          string        // "reqps", "seconds", "bytes", "percent", "short", "USD", "tokens", "tokps"
+    Queries       []PanelQuery  // One or more PromQL queries
+    TimeRange     string        // "1h", "24h", "7d" — fixed per panel
+    Subtitle      string        // Optional: "req/s · 24h · by agent"
+    SubtitleColor string        // Optional: "success", "danger", "warning", "muted"
+    ValueColor    string        // Optional: "success", "danger", "warning" (stat panels)
+    DisplayValue  string        // Optional: override formatted value (e.g., "LLM timeout")
 }
 
 type View struct {
@@ -208,6 +212,7 @@ The BFF exposes a small, purpose-built API — not a PromQL proxy:
   "view": {
     "id": "agent-overview",
     "title": "Agent Execution Overview",
+    "description": "Real-time view of agent health, error rates, and execution performance",
     "refreshSec": 30
   },
   "panels": [
@@ -216,6 +221,7 @@ The BFF exposes a small, purpose-built API — not a PromQL proxy:
       "title": "Invocation Rate",
       "type": "timeseries",
       "unit": "reqps",
+      "subtitle": "req/s · 24h · by agent",
       "data": {
         "resultType": "matrix",
         "result": [
@@ -236,6 +242,8 @@ The BFF exposes a small, purpose-built API — not a PromQL proxy:
   ]
 }
 ```
+
+Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value).
 
 The BFF executes all panel queries for a view in parallel (bounded by per-workspace concurrency limit), merges results, and returns them in a single response. The frontend makes one request per view load and one request per panel on auto-refresh.
 

@@ -75,6 +75,7 @@ interface ViewResponse {
   view: {
     id: string;
     title: string;
+    description: string;
     refreshSec: number;
   };
   panels: Panel[];
@@ -84,19 +85,27 @@ interface Panel {
   id: string;
   title: string;
   type: "stat" | "timeseries" | "bar" | "table" | "heatmap" | "gauge";
-  unit: string; // "reqps" | "seconds" | "bytes" | "percent" | "short"
+  unit: "reqps" | "seconds" | "bytes" | "percent" | "short" | "USD" | "tokens" | "tokps";
   data: PanelData;
+  subtitle?: string;
+  subtitleColor?: "success" | "danger" | "warning" | "muted";
+  valueColor?: "success" | "danger" | "warning";
+  displayValue?: string;
 }
 
-interface PanelData {
-  resultType: "vector" | "matrix";
-  result: MetricResult[];
-}
+type PanelData =
+  | { resultType: "matrix"; result: MatrixResult[] }
+  | { resultType: "vector"; result: VectorResult[] }
+  | { resultType: "scalar"; result: [number, string] };
 
-interface MetricResult {
+interface MatrixResult {
   metric: Record<string, string>;
-  value?: [number, string];   // instant vector: [timestamp, value]
-  values?: [number, string][]; // range vector: [[ts, val], ...]
+  values: [number, string][];  // range vector: [[ts, val], ...]
+}
+
+interface VectorResult {
+  metric: Record<string, string>;
+  value: [number, string];     // instant vector: [timestamp, value]
 }
 ```
 
@@ -104,11 +113,11 @@ interface MetricResult {
 
 | View ID | Page component | Stat panels | Timeseries panels | Bar panels | Table panels | Heatmap panels | refreshSec |
 |---|---|---|---|---|---|---|---|
-| `agent-overview` | `AgentOverview.tsx` | active_agents, total_invocations, error_rate_current, p95_latency_current | invocation_rate, error_rate, p95_latency | errors_by_type | — | step_distribution | 30 |
-| `tool-call-performance` | `ToolCallPerformance.tsx` | active_tools, total_tool_calls, tool_error_rate, retry_rate | tool_latency_percentiles, tool_error_rates | tool_call_frequency, retry_rate_by_tool | slowest_tools | — | 30 |
-| `llm-token-usage` | `LLMTokenUsage.tsx` | total_tokens, token_rate, estimated_cost, avg_tokens_per_invocation | tokens_by_model, prompt_vs_completion, token_rate_trend | cost_by_model | top_consumers | — | 60 |
-| `error-breakdown` | `ErrorBreakdown.tsx` | total_errors, error_rate_current, most_common_error | error_rate_trend | errors_by_type, errors_by_agent, errors_by_version | top_error_messages | — | 30 |
-| `cost-tracking` | `CostTracking.tsx` | daily_cost, projected_monthly, cost_per_invocation, week_over_week | cost_trend, cost_per_invocation_trend | cost_by_agent, cost_by_model | — | — | 300 |
+| `agent-overview` | `AgentOverview.tsx` | active_agents, total_invocations_24h, error_rate_current, p95_latency_current | invocation_rate, error_rate, p95_latency | errors_by_type, guardrail_pass_fail | — | step_distribution | 30 |
+| `tool-call-performance` | `ToolCallPerformance.tsx` | active_tools, total_tool_calls_24h, tool_error_rate_current, retry_rate | tool_latency_percentiles, tool_error_rates | retry_rate_by_tool | slowest_tools | — | 30 |
+| `llm-token-usage` | `LLMTokenUsage.tsx` | total_tokens_24h, token_rate, estimated_cost_24h, avg_tokens_per_invocation | token_rate_by_model, prompt_vs_completion | cost_by_model | top_token_consumers | — | 60 |
+| `error-breakdown` | `ErrorBreakdown.tsx` | total_errors_24h, error_rate_overall, most_common_error | error_rate_trend | errors_by_type, errors_by_agent | top_error_messages | — | 30 |
+| `cost-tracking` | `CostTracking.tsx` | estimated_daily_cost, projected_monthly_cost, cost_per_invocation_avg, cost_change_wow | cost_trend, cost_per_invocation | cost_by_agent, cost_by_model | — | — | 300 |
 
 ---
 
@@ -701,7 +710,7 @@ export function makeViewResponse(
   refreshSec: number = 30
 ): ViewResponse {
   return {
-    view: { id: viewId, title: `Test View: ${viewId}`, refreshSec },
+    view: { id: viewId, title: `Test View: ${viewId}`, description: `Test description for ${viewId}`, refreshSec },
     panels,
   };
 }
