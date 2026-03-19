@@ -262,7 +262,7 @@ Browser                BFF                          Mimir Query Frontend
   │                     │ 1. Validate JWT                    │
   │                     │ 2. Extract workspace_id from claims│
   │                     │ 3. Look up "agent-overview" view   │
-  │                     │    (compiled Go struct)             │
+  │                     │    (compiled Go struct)            │
   │                     │ 4. Derive X-Scope-OrgID            │
   │                     │                                    │
   │                     │ 5. Execute all panel queries in    │
@@ -274,10 +274,10 @@ Browser                BFF                          Mimir Query Frontend
   │                     │      query_range?query=sum(...)    │
   │                     │    Panel 3: ...                    │
   │                     │    (all with X-Scope-OrgID header) │
-  │                     │────────────────────────────────────>│
+  │                     │───────────────────────────────────>│
   │                     │                                    │
   │                     │    All results returned            │
-  │                     │<────────────────────────────────────│
+  │                     │<───────────────────────────────────│
   │                     │                                    │
   │                     │ 6. Assemble view response          │
   │                     │ 7. Log audit event                 │
@@ -531,10 +531,10 @@ To add a new predefined view, a platform engineer:
 This workflow makes Grafana the **hypothesis testing tool** and the custom dashboard the **production delivery mechanism**:
 
 ```
-Platform Engineer                  Grafana               BFF + Frontend
-─────────────────                  ───────               ──────────────
+Platform Engineer                 Grafana                BFF + Frontend
+─────────────────                 ───────                ──────────────
 
-1. Hypothesis: "We should track     │                         │
+1. Hypothesis: "We should track      │                         │
    tool retry rate per agent"        │                         │
                                      │                         │
 2. Open Grafana, select tenant  ────>│                         │

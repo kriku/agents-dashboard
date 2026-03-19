@@ -1,11 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createElement, type ReactNode } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../mocks/server';
 import { useView } from '../useView';
-import { mockAgentOverview } from '../../../specs/bff-mock-data';
 
 function createWrapper() {
   const queryClient = new QueryClient({

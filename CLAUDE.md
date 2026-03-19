@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the **frontend application** for a multi-tenant AI agent monitoring platform. It is a React SPA that renders predefined, read-only dashboard views for AI agent fleet metrics.
 
-**Scope of this repo:** This repository contains only the custom dashboard frontend. The Go BFF (Backend-for-Frontend) is a separate service, not implemented here. During development, all data comes from mock responses defined in `specs/bff-mock-data.ts`.
+**Scope of this repo:** This repository contains only the custom dashboard frontend. The Go BFF (Backend-for-Frontend) is a separate service, not implemented here. During development, all data comes from mock responses defined in `src/mocks/bff-mock-data.ts`.
 
 The architecture follows a **predefined, read-only dashboard model** (Phase 1) where all queries are server-owned — the browser never sends or sees PromQL. The BFF translates named view requests into PromQL, executes against Mimir, and returns structured JSON. This frontend consumes that JSON.
 
@@ -64,7 +64,7 @@ All data isolation is enforced at the **workspace** level via the `X-Scope-OrgID
 
 ### BFF (Context Only)
 
-The BFF is a separate Go service (~1,500 LoC) that owns all PromQL queries, validates JWTs, derives tenant IDs, and returns structured JSON to this frontend. It is **not implemented in this repo**. See `specs/metrics-dashboard-read-path-architecture.md` for the full BFF design.
+The BFF is a separate Go service (~1,500 LoC) that owns all PromQL queries, validates JWTs, derives tenant IDs, and returns structured JSON to this frontend. It is **not implemented in this repo**. See `specs/02-metrics-dashboard-read-path.md` for the full BFF design.
 
 ---
 
@@ -85,7 +85,8 @@ src/
 │   ├── client.ts               # Base fetch wrapper with JWT injection
 │   └── views.ts                # Typed API: fetchView(), fetchPanel()
 ├── mocks/
-│   └── handlers.ts             # Mock data layer — imports from specs/bff-mock-data.ts
+│   ├── bff-mock-data.ts         # Source of truth for mock data & response types
+│   └── handlers.ts             # Mock data layer — imports from bff-mock-data.ts
 ├── components/
 │   ├── charts/
 │   │   ├── __tests__/          # Chart component tests
@@ -118,8 +119,6 @@ src/
 └── utils/
     ├── __tests__/              # Formatter unit tests (100% coverage target)
     └── formatters.ts           # Unit formatting (bytes, duration, rate, %)
-specs/
-└── bff-mock-data.ts            # Source of truth for mock data & response types
 mockups/
 ├── dashboard-appshell-agent-overview.html  # AppShell + Agent Overview layout
 ├── dashboard-cost-tracking.html            # Cost Tracking view
@@ -161,7 +160,7 @@ The BFF derives `org-{org_id}__ws-{workspace_id}` from authenticated JWT claims.
 
 ## BFF API Contract
 
-The frontend codes against this API surface. **Currently mocked** — response shapes are defined in `specs/bff-mock-data.ts`.
+The frontend codes against this API surface. **Currently mocked** — response shapes are defined in `src/mocks/bff-mock-data.ts`.
 
 | Endpoint | Method | Purpose | Response |
 |----------|--------|---------|----------|
@@ -339,7 +338,7 @@ The frontend handles JWT tokens for authentication. Key considerations:
 
 ## Adding a New View (Developer Workflow)
 
-1. **Add mock data** — add a new `ViewResponse` object in `specs/bff-mock-data.ts` following existing patterns
+1. **Add mock data** — add a new `ViewResponse` object in `src/mocks/bff-mock-data.ts` following existing patterns
 2. **Create the React page** — add a page component in `src/pages/` using the ViewPage pattern
 3. **Add the route** — add route in `src/App.tsx` and nav entry in `AppShell.tsx`
 
@@ -352,7 +351,7 @@ The frontend handles JWT tokens for authentication. Key considerations:
 | **1: Foundation** | Vite + React + TypeScript project setup, TanStack Query, React Router, Ant Design theming |
 | **2: Layout & Navigation** | AppShell (sidebar nav, header), route structure for 5 views, PanelCard skeleton |
 | **3: Chart Components** | 6 chart components: TimeSeriesChart (uPlot), StatChart, GaugeChart, HeatmapChart, BarChart (ECharts), TableChart (Ant Design) |
-| **4: Panel Rendering** | PanelRenderer routing, useView hook, mock data integration via `specs/bff-mock-data.ts` |
+| **4: Panel Rendering** | PanelRenderer routing, useView hook, mock data integration via `src/mocks/bff-mock-data.ts` |
 | **5: View Pages** | 5 page components with grid layouts: AgentOverview, ToolCallPerformance, LLMTokenUsage, ErrorBreakdown, CostTracking |
 | **6: Polish** | Unit formatting, loading states, error states, responsive layout, auto-refresh indicators |
 
@@ -410,7 +409,7 @@ The frontend handles JWT tokens for authentication. Key considerations:
 - `vitest run` — unit + integration tests
 - `playwright test` — E2E tests
 
-See `specs/dashboard-frontend-test-specifications.md` for detailed test case IDs and specifications.
+See `specs/03-test-specifications.md` for detailed test case IDs and specifications.
 
 ---
 
@@ -437,10 +436,11 @@ These are explicitly deferred to future phases:
 
 These documents in the project define the full system design:
 
-- `specs/monitoring-system-requirements-v5.md` — Functional and non-functional requirements (v5.0, security-hardened)
-- `specs/metrics-dashboard-read-path-architecture.md` — Read path: BFF + Frontend + Grafana (this is the primary implementation spec)
-- `specs/bff-mock-data.ts` — Mock data with exact JSON response shapes (source of truth for frontend contracts and type definitions)
-- `specs/metrics-read-path-architecture.mermaid` — Dashboard read path diagram
-- `specs/metrics-write-path.mermaid` — Metrics ingestion pipeline diagram
-- `specs/dashboard-frontend-test-specifications.md` — Frontend test specifications: test pyramid, ~164 test cases (unit/integration/E2E), fixture factories, coverage targets
+- `specs/00-system-requirements.md` — Functional and non-functional requirements (v5.0, security-hardened)
+- `specs/01-metrics-catalogue.md` — Metrics catalogue: 80 metrics across 9 categories, OTel GenAI conventions
+- `specs/02-metrics-dashboard-read-path.md` — Read path: BFF + Frontend + Grafana (this is the primary implementation spec)
+- `specs/02-metrics-read-path.mermaid` — Dashboard read path diagram
+- `specs/02-metrics-write-path.mermaid` — Metrics ingestion pipeline diagram
+- `specs/03-test-specifications.md` — Frontend test specifications: test pyramid, ~164 test cases (unit/integration/E2E), fixture factories, coverage targets
+- `src/mocks/bff-mock-data.ts` — Mock data with exact JSON response shapes (source of truth for frontend contracts and type definitions)
 - `mockups/*.html` — Static HTML mockups for all 5 dashboard views (AppShell layout, charts, grid structure)

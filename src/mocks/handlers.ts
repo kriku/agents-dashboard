@@ -6,7 +6,7 @@ import {
   mockLLMTokenUsage,
   mockErrorBreakdown,
   mockCostTracking,
-} from '../../specs/bff-mock-data';
+} from './bff-mock-data';
 import type { ViewResponse } from '../types/views';
 
 const viewMap: Record<string, ViewResponse> = {
