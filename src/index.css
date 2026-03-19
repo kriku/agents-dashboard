@@ -246,6 +246,11 @@ body {
   overflow: hidden;
 }
 
+.chart-container .u-legend {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .chart-empty {
   display: flex;
   align-items: center;

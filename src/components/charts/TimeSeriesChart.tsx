@@ -151,6 +151,7 @@ export function TimeSeriesChart({ data, unit, thresholds, annotations }: TimeSer
         label: Object.values(s.metric).join(' ') || `Series ${i + 1}`,
         stroke: COLORS[i % COLORS.length]!,
         width: 1.5,
+        value: (_self: uPlot, rawValue: number) => rawValue == null ? '--' : formatValue(rawValue, unit),
       })),
     ],
   };
