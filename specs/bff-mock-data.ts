@@ -452,6 +452,8 @@ export const mockToolCallPerformance: ViewResponse = {
       title: "Active Tools",
       type: "stat",
       unit: "short",
+      subtitle: "▲ 1 new since last deploy",
+      subtitleColor: "success",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "8"] }],
@@ -462,6 +464,8 @@ export const mockToolCallPerformance: ViewResponse = {
       title: "Total Tool Calls (24h)",
       type: "stat",
       unit: "short",
+      subtitle: "~2.6 calls/invocation avg",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "127439"] }],
@@ -473,6 +477,8 @@ export const mockToolCallPerformance: ViewResponse = {
       type: "stat",
       unit: "percent",
       valueColor: "warning",
+      subtitle: "▲ 0.5% from baseline",
+      subtitleColor: "warning",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "1.8"] }],
@@ -483,6 +489,8 @@ export const mockToolCallPerformance: ViewResponse = {
       title: "Retry Rate",
       type: "stat",
       unit: "percent",
+      subtitle: "▲ 1.1% from yesterday",
+      subtitleColor: "danger",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "4.2"] }],
@@ -784,7 +792,7 @@ export const mockErrorBreakdown: ViewResponse = {
     refreshSec: 30,
   },
   panels: [
-    // ── Row 1: Stats (3 columns) ────────────────────────────────────────
+    // ── Row 1: Stats (4 columns) ────────────────────────────────────────
     {
       id: "total_errors_24h",
       title: "Total Errors (24h)",
@@ -808,6 +816,19 @@ export const mockErrorBreakdown: ViewResponse = {
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "2.34"] }],
+      },
+    },
+    {
+      id: "error_budget_remaining",
+      title: "Error Budget Remaining",
+      type: "stat",
+      unit: "percent",
+      valueColor: "warning",
+      subtitle: "Burn rate: 2.1x (fast)",
+      subtitleColor: "danger",
+      data: {
+        resultType: "vector",
+        result: [{ metric: {}, value: [NOW, "41"] }],
       },
     },
     {

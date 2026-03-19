@@ -116,7 +116,7 @@ interface VectorResult {
 | `agent-overview` | `AgentOverview.tsx` | active_agents, total_invocations_24h, error_rate_current, p95_latency_current | invocation_rate, error_rate, p95_latency | errors_by_type, guardrail_pass_fail | — | step_distribution | 30 |
 | `tool-call-performance` | `ToolCallPerformance.tsx` | active_tools, total_tool_calls_24h, tool_error_rate_current, retry_rate | tool_latency_percentiles, tool_error_rates | retry_rate_by_tool | slowest_tools | — | 30 |
 | `llm-token-usage` | `LLMTokenUsage.tsx` | total_tokens_24h, token_rate, estimated_cost_24h, avg_tokens_per_invocation | token_rate_by_model, prompt_vs_completion | cost_by_model | top_token_consumers | — | 60 |
-| `error-breakdown` | `ErrorBreakdown.tsx` | total_errors_24h, error_rate_overall, most_common_error | error_rate_trend | errors_by_type, errors_by_agent | top_error_messages | — | 30 |
+| `error-breakdown` | `ErrorBreakdown.tsx` | total_errors_24h, error_rate_overall, error_budget_remaining, most_common_error | error_rate_trend | errors_by_type, errors_by_agent | top_error_messages | — | 30 |
 | `cost-tracking` | `CostTracking.tsx` | estimated_daily_cost, projected_monthly_cost, cost_per_invocation_avg, cost_change_wow | cost_trend, cost_per_invocation | cost_by_agent, cost_by_model | — | — | 300 |
 
 ---
@@ -538,7 +538,7 @@ Each page test renders the page component with MSW returning the corresponding v
 | ID | Test case | Setup | Expected |
 |---|---|---|---|
 | I-EB-001 | Renders page title | MSW returns fixture | Heading "Error Breakdown" visible |
-| I-EB-002 | Row 1: three stat cards | Inspect DOM | "Total errors", "Error rate", "Most common error" |
+| I-EB-002 | Row 1: four stat cards | Inspect DOM | "Total errors", "Error rate", "Error budget remaining", "Most common error" |
 | I-EB-003 | Row 2: trend + type bars | Inspect DOM | "Error rate trend" and "Errors by type" visible |
 | I-EB-004 | Row 3: agent bars + messages table | Inspect DOM | "Errors by agent" and "Top error messages" visible |
 

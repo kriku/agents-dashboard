@@ -4,8 +4,8 @@
     <p style="font-size: 13px; color: var(--color-text-secondary, #666); margin: 0;">Error classification by type, agent, and version &middot; Refreshes every 30s</p>
   </div>
 
-  <!-- Row 1: Stats -->
-  <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+  <!-- Row 1: FOUR stat cards -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Total errors (24h)</div>
       <div style="font-size: 26px; font-weight: 500; color: var(--color-text-danger, #E24B4A);">1,108</div>
@@ -15,6 +15,11 @@
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Error rate (current)</div>
       <div style="font-size: 26px; font-weight: 500;">2.3%</div>
       <div style="font-size: 11px; color: var(--color-text-secondary, #666); margin-top: 2px;">SLO target: &lt; 3%</div>
+    </div>
+    <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
+      <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Error budget remaining</div>
+      <div style="font-size: 26px; font-weight: 500; color: var(--color-text-warning, #BA7517);">41%</div>
+      <div style="font-size: 11px; color: var(--color-text-danger, #E24B4A); margin-top: 2px;">Burn rate: 2.1x (fast)</div>
     </div>
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Most common error</div>
@@ -37,17 +42,14 @@
         <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
         <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
         <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
-        <!-- SLO line at 3% -->
         <line x1="20" y1="55" x2="320" y2="55" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.6"/>
         <text style="font-size:9px;fill:#BA7517" x="275" y="51">SLO 3%</text>
-        <!-- Error rate with a spike around 08:00 -->
         <polygon fill="#E24B4A" opacity="0.08" points="24,100 60,100 96,100 132,100 168,100 204,100 240,100 276,100 312,100 312,60 276,62 240,65 204,55 168,22 132,68 96,72 60,78 24,80"/>
         <polyline fill="none" stroke="#E24B4A" stroke-width="1.5" points="24,80 60,78 96,72 132,68 168,22 204,55 240,65 276,62 312,60"/>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="130" y="116">08:00</text>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="300" y="116">now</text>
-        <!-- Annotation for spike -->
         <circle cx="168" cy="22" r="3" fill="none" stroke="#E24B4A" stroke-width="1"/>
         <text style="font-size:9px;fill:#E24B4A" x="175" y="18">spike 5.8%</text>
       </svg>
@@ -108,7 +110,6 @@
         </div>
       </div>
     </div>
-    <!-- Top error messages table -->
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Top error messages</div>
       <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">table &middot; 24h</div>

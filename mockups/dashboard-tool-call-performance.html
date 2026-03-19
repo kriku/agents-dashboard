@@ -4,23 +4,27 @@
     <p style="font-size: 13px; color: var(--color-text-secondary, #666); margin: 0;">Per-tool latency, error rates, and retry patterns &middot; Refreshes every 30s</p>
   </div>
 
-  <!-- Row 1: Stat cards -->
+  <!-- Row 1: Stat cards WITH subtitles -->
   <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Active tools</div>
       <div style="font-size: 26px; font-weight: 500;">8</div>
+      <div style="font-size: 11px; color: var(--color-text-success, #1D9E75); margin-top: 2px;">&#9650; 1 new since last deploy</div>
     </div>
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Total tool calls (24h)</div>
       <div style="font-size: 26px; font-weight: 500;">127K</div>
+      <div style="font-size: 11px; color: var(--color-text-secondary, #666); margin-top: 2px;">~2.6 calls/invocation avg</div>
     </div>
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Tool error rate</div>
       <div style="font-size: 26px; font-weight: 500; color: var(--color-text-warning, #BA7517);">1.8%</div>
+      <div style="font-size: 11px; color: var(--color-text-warning, #BA7517); margin-top: 2px;">&#9650; 0.5% from baseline</div>
     </div>
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 12px; color: var(--color-text-secondary, #666); margin-bottom: 6px;">Retry rate</div>
       <div style="font-size: 26px; font-weight: 500;">4.2%</div>
+      <div style="font-size: 11px; color: var(--color-text-danger, #E24B4A); margin-top: 2px;">&#9650; 1.1% from yesterday</div>
     </div>
   </div>
 
@@ -38,11 +42,8 @@
         <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
         <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
         <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary, #e0e0e0)" stroke-width="0.5"/>
-        <!-- p99 (red, top) -->
         <polyline fill="none" stroke="#E24B4A" stroke-width="1" opacity="0.6" points="24,28 60,30 96,25 132,32 168,20 204,26 240,24 276,22 312,25"/>
-        <!-- p95 (amber, middle) -->
         <polyline fill="none" stroke="#BA7517" stroke-width="1.5" points="24,52 60,55 96,48 132,56 168,44 204,50 240,48 276,46 312,48"/>
-        <!-- p50 (teal, bottom) -->
         <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,85 60,88 96,82 132,90 168,80 204,84 240,82 276,80 312,82"/>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="24" y="116">00:00</text>
         <text style="font-size:9px;fill:var(--color-text-tertiary, #999)" x="240" y="116">16:00</text>
@@ -109,7 +110,6 @@
         </div>
       </div>
     </div>
-    <!-- Slowest tools table -->
     <div style="background: var(--color-background-primary, #fff); border-radius: var(--border-radius-md, 8px); padding: 16px; border: 0.5px solid var(--color-border-tertiary, #e0e0e0);">
       <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Slowest tools (p95)</div>
       <div style="font-size: 11px; color: var(--color-text-tertiary, #999); margin-bottom: 12px;">table &middot; current window</div>
