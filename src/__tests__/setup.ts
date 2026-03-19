@@ -47,6 +47,19 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// ECharts needs non-zero clientWidth/clientHeight (jsdom returns 0 by default)
+const origCreateElement = document.createElement.bind(document);
+document.createElement = ((tagName: string, options?: ElementCreationOptions) => {
+  const el = origCreateElement(tagName, options);
+  if (tagName.toLowerCase() === 'div' || tagName.toLowerCase() === 'canvas') {
+    Object.defineProperties(el, {
+      clientWidth: { get: () => 800, configurable: true },
+      clientHeight: { get: () => 600, configurable: true },
+    });
+  }
+  return el;
+}) as typeof document.createElement;
+
 // uPlot + ECharts require canvas context in jsdom
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   clearRect: vi.fn(),
