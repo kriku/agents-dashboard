@@ -33,7 +33,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npx tsc -p tsconfig.build.json && npx vite build --mode development
         env:
           BASE_PATH: /agents-dashboard/
       - uses: actions/upload-pages-artifact@v3
