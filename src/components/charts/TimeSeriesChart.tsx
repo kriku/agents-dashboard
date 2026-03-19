@@ -49,6 +49,12 @@ export function TimeSeriesChart({ data, unit }: TimeSeriesChartProps) {
     axes: [
       {},
       {
+        size(self, values) {
+          if (!values) return 40;
+          const maxLabel = values.reduce((a, b) => (a.length > b.length ? a : b), "");
+          const ctx = self.ctx;
+          return ctx.measureText(maxLabel).width + 24;
+        },
         values: (_self, ticks) => ticks.map((v) => formatValue(v, unit)),
       },
     ],

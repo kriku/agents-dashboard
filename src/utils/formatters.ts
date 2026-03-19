@@ -6,13 +6,13 @@ import type { PanelUnit } from '../types/views';
 export function formatValue(value: number, unit: PanelUnit): string {
   switch (unit) {
     case 'reqps':
-      return `${formatNumber(value)} req/s`;
+      return `${formatNumber(value, Number.isInteger(value) ? 0 : 1)} req/s`;
     case 'seconds':
       return formatDuration(value);
     case 'bytes':
       return formatBytes(value);
     case 'percent':
-      return `${formatNumber(value, 1)}%`;
+      return `${formatNumber(value, Number.isInteger(value) ? 0 : 1)}%`;
     case 'short':
       return formatCompact(value);
     case 'USD':
@@ -20,7 +20,7 @@ export function formatValue(value: number, unit: PanelUnit): string {
     case 'tokens':
       return formatCompact(value);
     case 'tokps':
-      return `${formatNumber(value)} tok/s`;
+      return `${formatNumber(value, Number.isInteger(value) ? 0 : 1)} tok/s`;
   }
 }
 
@@ -28,7 +28,7 @@ export function formatValue(value: number, unit: PanelUnit): string {
 export function formatDuration(seconds: number): string {
   if (seconds < 0.001) return `${(seconds * 1_000_000).toFixed(0)}µs`;
   if (seconds < 1) return `${(seconds * 1000).toFixed(0)}ms`;
-  if (seconds < 60) return `${seconds.toFixed(2)}s`;
+  if (seconds < 60) return `${Number.isInteger(seconds) ? seconds.toFixed(0) : seconds.toFixed(2)}s`;
   if (seconds < 3600) {
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
@@ -50,7 +50,7 @@ export function formatBytes(bytes: number): string {
 
 /** Format a number with compact notation (K, M, B) */
 export function formatCompact(value: number): string {
-  if (Math.abs(value) < 1000) return formatNumber(value);
+  if (Math.abs(value) < 1000) return formatNumber(value, Number.isInteger(value) ? 0 : undefined);
   if (Math.abs(value) < 1_000_000) return `${(value / 1000).toFixed(1)}K`;
   if (Math.abs(value) < 1_000_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
   return `${(value / 1_000_000_000).toFixed(1)}B`;
@@ -58,9 +58,9 @@ export function formatCompact(value: number): string {
 
 /** Format as USD currency */
 export function formatUSD(value: number): string {
-  if (Math.abs(value) < 0.01) return `$${value.toFixed(4)}`;
-  if (Math.abs(value) < 1) return `$${value.toFixed(3)}`;
-  return `$${formatNumber(value, 2)}`;
+  if (Math.abs(value) < 0.01) return `$${parseFloat(value.toFixed(4))}`;
+  if (Math.abs(value) < 1) return `$${parseFloat(value.toFixed(3))}`;
+  return `$${formatNumber(value, Number.isInteger(value) ? 0 : 2)}`;
 }
 
 /** Format a number with specified decimal places, adding commas */

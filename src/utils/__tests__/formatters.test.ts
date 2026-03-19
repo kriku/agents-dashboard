@@ -32,6 +32,11 @@ describe('formatDuration', () => {
   it('formats zero as µs', () => {
     expect(formatDuration(0)).toBe('0µs');
   });
+
+  it('formats integer seconds without decimals', () => {
+    expect(formatDuration(5)).toBe('5s');
+    expect(formatDuration(30)).toBe('30s');
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -57,6 +62,17 @@ describe('formatCompact', () => {
   it('formats zero', () => {
     expect(formatCompact(0)).toMatch(/0/);
   });
+
+  it('formats integer without decimals', () => {
+    expect(formatCompact(8)).toBe('8');
+    expect(formatCompact(12)).toBe('12');
+    expect(formatCompact(999)).toBe('999');
+  });
+
+  it('formats non-integer with decimals', () => {
+    expect(formatCompact(8.5)).toMatch(/8\.5/);
+    expect(formatCompact(42.7)).toMatch(/42\.7/);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -67,8 +83,9 @@ describe('formatUSD', () => {
     expect(formatUSD(253.82)).toBe('$253.82');
   });
 
-  it('formats sub-penny with 4 decimals', () => {
+  it('formats sub-penny without trailing zeros', () => {
     expect(formatUSD(0.00526)).toBe('$0.0053');
+    expect(formatUSD(0.005)).toBe('$0.005');
   });
 
   it('formats sub-dollar with 3 decimals', () => {
@@ -76,7 +93,12 @@ describe('formatUSD', () => {
   });
 
   it('formats zero', () => {
-    expect(formatUSD(0)).toBe('$0.0000');
+    expect(formatUSD(0)).toBe('$0');
+  });
+
+  it('formats integer without decimals', () => {
+    expect(formatUSD(100)).toBe('$100');
+    expect(formatUSD(1500)).toBe('$1,500');
   });
 });
 
@@ -127,5 +149,34 @@ describe('formatValue', () => {
 
   it('formats tokps unit', () => {
     expect(formatValue(95, 'tokps')).toContain('tok/s');
+  });
+
+  it('formats short integer without decimals', () => {
+    expect(formatValue(8, 'short')).toBe('8');
+    expect(formatValue(12, 'short')).toBe('12');
+  });
+
+  it('formats reqps integer without decimals', () => {
+    expect(formatValue(95, 'reqps')).toBe('95 req/s');
+  });
+
+  it('formats tokps integer without decimals', () => {
+    expect(formatValue(120, 'tokps')).toBe('120 tok/s');
+  });
+
+  it('formats tokps non-integer with decimals', () => {
+    expect(formatValue(95.5, 'tokps')).toBe('95.5 tok/s');
+  });
+
+  it('formats seconds integer without decimals', () => {
+    expect(formatValue(5, 'seconds')).toBe('5s');
+  });
+
+  it('formats USD integer without decimals', () => {
+    expect(formatValue(100, 'USD')).toBe('$100');
+  });
+
+  it('formats percent integer without decimals', () => {
+    expect(formatValue(100, 'percent')).toBe('100%');
   });
 });
