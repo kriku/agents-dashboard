@@ -23,11 +23,11 @@ export function ViewPage({ viewId, layout }: ViewPageProps) {
     <div className="view-page">
       <div className="view-page__header">
         <h1>{data?.view.title ?? viewId}</h1>
-        {data?.view.description && <p>{data.view.description}</p>}
-        {data?.view.refreshSec && (
-          <span className="view-page__refresh">
-            Refreshes every {data.view.refreshSec}s
-          </span>
+        {data?.view.description && (
+          <p>
+            {data.view.description}
+            {data.view.refreshSec ? ` · Refreshes every ${data.view.refreshSec}s` : ''}
+          </p>
         )}
       </div>
       <div className="view-page__grid">

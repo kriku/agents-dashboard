@@ -1,10 +1,9 @@
 import { ViewPage } from '../components/layout/ViewPage';
 
 const LAYOUT = [
-  ['total_tokens_24h', 'input_tokens_24h', 'output_tokens_24h', 'avg_llm_latency_5m'],
+  ['total_tokens_24h', 'token_rate', 'estimated_cost_24h', 'avg_tokens_per_invocation'],
   ['token_rate_by_model', 'prompt_vs_completion'],
-  ['llm_latency_by_model', 'cost_by_model'],
-  ['top_token_consumers'],
+  ['cost_by_model', 'top_token_consumers'],
 ];
 
 export function LLMTokenUsage() {

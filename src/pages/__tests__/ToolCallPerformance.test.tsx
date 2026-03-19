@@ -16,9 +16,9 @@ describe('ToolCallPerformance', () => {
   it('renders panel titles from mock data', async () => {
     renderWithProviders(<ToolCallPerformance />);
     await waitFor(() => {
-      expect(screen.getByText('Tool Calls (24h)')).toBeInTheDocument();
+      expect(screen.getByText('Active Tools')).toBeInTheDocument();
     });
-    expect(screen.getByText('Tool Latency (p50 / p95 / p99)')).toBeInTheDocument();
+    expect(screen.getByText('Tool Latency p50/p95/p99')).toBeInTheDocument();
     expect(screen.getByText('Slowest Tools (p95)')).toBeInTheDocument();
   });
 

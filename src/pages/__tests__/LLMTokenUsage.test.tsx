@@ -18,7 +18,7 @@ describe('LLMTokenUsage', () => {
     await waitFor(() => {
       expect(screen.getByText('Total Tokens (24h)')).toBeInTheDocument();
     });
-    expect(screen.getByText('Token Rate by Model')).toBeInTheDocument();
+    expect(screen.getByText('Tokens by Model')).toBeInTheDocument();
     expect(screen.getByText('Top Token Consumers (24h)')).toBeInTheDocument();
   });
 

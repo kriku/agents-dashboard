@@ -19,6 +19,10 @@ export interface Panel {
   type: PanelType;
   unit: PanelUnit;
   data: PanelData;
+  subtitle?: string;
+  subtitleColor?: 'success' | 'danger' | 'warning' | 'muted';
+  valueColor?: 'success' | 'danger' | 'warning';
+  displayValue?: string;
 }
 
 export type PanelType = 'timeseries' | 'stat' | 'gauge' | 'heatmap' | 'bar' | 'table';

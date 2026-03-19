@@ -18,8 +18,8 @@ describe('CostTracking', () => {
     await waitFor(() => {
       expect(screen.getByText('Est. Daily Cost')).toBeInTheDocument();
     });
-    expect(screen.getByText('Cumulative Cost (24h)')).toBeInTheDocument();
-    expect(screen.getByText('Cost by Agent (24h)')).toBeInTheDocument();
+    expect(screen.getByText('Daily Cost Trend')).toBeInTheDocument();
+    expect(screen.getByText('Cost by Agent')).toBeInTheDocument();
   });
 
   it('shows error state on server error', async () => {

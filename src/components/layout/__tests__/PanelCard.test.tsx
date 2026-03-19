@@ -47,4 +47,18 @@ describe('PanelCard', () => {
     expect(card).toHaveAttribute('data-panel-id', 'bar1');
     expect(card).toHaveAttribute('data-panel-type', 'bar');
   });
+
+  it('renders subtitle for non-stat panels', () => {
+    const panels = [makeBarPanel({ id: 'x', title: 'Error Types', subtitle: 'count · 24h' })];
+    render(<PanelCard panelId="x" panels={panels} loading={false} />);
+    const subtitle = document.querySelector('.panel-card__subtitle');
+    expect(subtitle).toHaveTextContent('count · 24h');
+  });
+
+  it('does not render subtitle for stat panels', () => {
+    const panels = [makeStatPanel({ id: 'x', subtitle: 'some text' })];
+    render(<PanelCard panelId="x" panels={panels} loading={false} />);
+    const subtitle = document.querySelector('.panel-card__subtitle');
+    expect(subtitle).toBeNull();
+  });
 });

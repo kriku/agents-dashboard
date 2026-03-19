@@ -49,6 +49,10 @@ export interface Panel {
   type: PanelType;
   unit: PanelUnit;
   data: PanelData;
+  subtitle?: string;
+  subtitleColor?: "success" | "danger" | "warning" | "muted";
+  valueColor?: "success" | "danger" | "warning";
+  displayValue?: string;
 }
 
 type PanelType = "timeseries" | "stat" | "gauge" | "heatmap" | "bar" | "table";
@@ -233,9 +237,11 @@ export const mockAgentOverview: ViewResponse = {
       title: "Active Agents",
       type: "stat",
       unit: "short",
+      subtitle: "▲ 2 from yesterday",
+      subtitleColor: "success",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "17"] }],
+        result: [{ metric: {}, value: [NOW, "12"] }],
       },
     },
     {
@@ -243,6 +249,8 @@ export const mockAgentOverview: ViewResponse = {
       title: "Invocations (24h)",
       type: "stat",
       unit: "short",
+      subtitle: "~33.5 req/s avg",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "48291"] }],
@@ -253,9 +261,12 @@ export const mockAgentOverview: ViewResponse = {
       title: "Error Rate (5m)",
       type: "stat",
       unit: "percent",
+      subtitle: "▲ 0.8% from baseline",
+      subtitleColor: "danger",
+      valueColor: "danger",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "2.34"] }],
+        result: [{ metric: {}, value: [NOW, "2.3"] }],
       },
     },
     {
@@ -263,9 +274,11 @@ export const mockAgentOverview: ViewResponse = {
       title: "p95 Latency (5m)",
       type: "stat",
       unit: "seconds",
+      subtitle: "▼ 0.3s improved",
+      subtitleColor: "success",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "4.812"] }],
+        result: [{ metric: {}, value: [NOW, "1.82"] }],
       },
     },
 
@@ -274,6 +287,7 @@ export const mockAgentOverview: ViewResponse = {
       // Metric #8: agent.invocation.count → rate()
       id: "invocation_rate",
       title: "Invocation Rate",
+      subtitle: "req/s · 24h · by agent",
       type: "timeseries",
       unit: "reqps",
       data: {
@@ -302,6 +316,7 @@ export const mockAgentOverview: ViewResponse = {
       // Metric #17: agent.error.count → rate() / rate(#8) * 100
       id: "error_rate",
       title: "Error Rate",
+      subtitle: "% · 24h · aggregate",
       type: "timeseries",
       unit: "percent",
       data: {
@@ -333,6 +348,7 @@ export const mockAgentOverview: ViewResponse = {
       // Metric #17: agent.error.count by error.type, increase over 24h
       id: "errors_by_type",
       title: "Errors by Type (24h)",
+      subtitle: "count · 24h",
       type: "bar",
       unit: "short",
       data: {
@@ -351,6 +367,7 @@ export const mockAgentOverview: ViewResponse = {
       // Metric #7: agent.invocation.duration → histogram_quantile(0.95)
       id: "p95_latency",
       title: "Execution Latency (p95)",
+      subtitle: "seconds · 24h · by agent",
       type: "timeseries",
       unit: "seconds",
       data: {
@@ -431,8 +448,18 @@ export const mockToolCallPerformance: ViewResponse = {
   panels: [
     // ── Row 1: Stats ──────────────────────────────────────────────────────
     {
+      id: "active_tools",
+      title: "Active Tools",
+      type: "stat",
+      unit: "short",
+      data: {
+        resultType: "vector",
+        result: [{ metric: {}, value: [NOW, "8"] }],
+      },
+    },
+    {
       id: "total_tool_calls_24h",
-      title: "Tool Calls (24h)",
+      title: "Total Tool Calls (24h)",
       type: "stat",
       unit: "short",
       data: {
@@ -442,40 +469,32 @@ export const mockToolCallPerformance: ViewResponse = {
     },
     {
       id: "tool_error_rate_current",
-      title: "Tool Error Rate (5m)",
+      title: "Tool Error Rate",
+      type: "stat",
+      unit: "percent",
+      valueColor: "warning",
+      data: {
+        resultType: "vector",
+        result: [{ metric: {}, value: [NOW, "1.8"] }],
+      },
+    },
+    {
+      id: "retry_rate",
+      title: "Retry Rate",
       type: "stat",
       unit: "percent",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "1.47"] }],
-      },
-    },
-    {
-      id: "p50_tool_latency_current",
-      title: "Tool p50 Latency (5m)",
-      type: "stat",
-      unit: "seconds",
-      data: {
-        resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "0.342"] }],
-      },
-    },
-    {
-      id: "p99_tool_latency_current",
-      title: "Tool p99 Latency (5m)",
-      type: "stat",
-      unit: "seconds",
-      data: {
-        resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "2.871"] }],
+        result: [{ metric: {}, value: [NOW, "4.2"] }],
       },
     },
 
-    // ── Row 2: Latency percentiles over time ──────────────────────────────
+    // ── Row 2: Tool latency + Tool error rates (timeseries) ──────────────
     {
       // Metric #20: tool.call.duration → histogram_quantile
       id: "tool_latency_percentiles",
-      title: "Tool Latency (p50 / p95 / p99)",
+      title: "Tool Latency p50/p95/p99",
+      subtitle: "seconds · 24h · aggregate",
       type: "timeseries",
       unit: "seconds",
       data: {
@@ -497,79 +516,63 @@ export const mockToolCallPerformance: ViewResponse = {
       },
     },
     {
-      // Metric #20: tool.call.duration by tool_name → histogram_quantile(0.95)
-      id: "latency_by_tool",
-      title: "p95 Latency by Tool",
+      // Metric #19: tool.call.count{status=error} / tool.call.count by tool over time
+      id: "tool_error_rates",
+      title: "Tool Error Rates",
+      subtitle: "% · 24h · by tool",
       type: "timeseries",
-      unit: "seconds",
+      unit: "percent",
       data: {
         resultType: "matrix",
         result: [
           {
-            metric: { tool_name: "web_search" },
-            values: stableSeries(ts24h, 1.85, 0.50),
+            metric: { tool_name: "code_exec" },
+            values: stableSeries(ts24h, 3.48, 1.5),
           },
           {
-            metric: { tool_name: "sql_query" },
-            values: stableSeries(ts24h, 0.92, 0.30),
+            metric: { tool_name: "web_search" },
+            values: stableSeries(ts24h, 2.14, 0.8),
           },
           {
             metric: { tool_name: "api_call" },
-            values: stableSeries(ts24h, 0.45, 0.15),
+            values: stableSeries(ts24h, 1.92, 0.7),
+          },
+          {
+            metric: { tool_name: "sql_query" },
+            values: stableSeries(ts24h, 0.87, 0.4),
           },
           {
             metric: { tool_name: "file_read" },
-            values: stableSeries(ts24h, 0.12, 0.04),
-          },
-          {
-            metric: { tool_name: "code_exec" },
-            values: stableSeries(ts24h, 2.30, 0.70),
+            values: stableSeries(ts24h, 0.31, 0.15),
           },
         ],
       },
     },
 
-    // ── Row 3: Call frequency + Error rate by tool ────────────────────────
+    // ── Row 3: Retry rate by tool (bar) + Slowest tools (table) ──────────
     {
-      // Metric #19: tool.call.count → increase(24h) by tool_name
-      id: "call_frequency",
-      title: "Call Frequency (24h)",
-      type: "bar",
-      unit: "short",
-      data: {
-        resultType: "vector",
-        result: [
-          { metric: { tool_name: "web_search" }, value: [NOW, "38210"] },
-          { metric: { tool_name: "sql_query" }, value: [NOW, "31842"] },
-          { metric: { tool_name: "api_call" }, value: [NOW, "27519"] },
-          { metric: { tool_name: "file_read" }, value: [NOW, "18304"] },
-          { metric: { tool_name: "code_exec" }, value: [NOW, "11564"] },
-        ],
-      },
-    },
-    {
-      // Metric #19: tool.call.count{status=error} / tool.call.count by tool
-      id: "tool_error_rates",
-      title: "Error Rate by Tool",
+      // Metric #19: tool.call.count{retried=true} / tool.call.count by tool
+      id: "retry_rate_by_tool",
+      title: "Retry Rate by Tool",
+      subtitle: "% retried · 24h",
       type: "bar",
       unit: "percent",
       data: {
         resultType: "vector",
         result: [
-          { metric: { tool_name: "web_search" }, value: [NOW, "2.14"] },
-          { metric: { tool_name: "sql_query" }, value: [NOW, "0.87"] },
-          { metric: { tool_name: "api_call" }, value: [NOW, "1.92"] },
-          { metric: { tool_name: "file_read" }, value: [NOW, "0.31"] },
-          { metric: { tool_name: "code_exec" }, value: [NOW, "3.48"] },
+          { metric: { tool_name: "web_search" }, value: [NOW, "6.3"] },
+          { metric: { tool_name: "api_call" }, value: [NOW, "5.1"] },
+          { metric: { tool_name: "code_exec" }, value: [NOW, "4.8"] },
+          { metric: { tool_name: "sql_query" }, value: [NOW, "2.9"] },
+          { metric: { tool_name: "file_read" }, value: [NOW, "1.2"] },
         ],
       },
     },
-
-    // ── Row 4: Slowest tools table ────────────────────────────────────────
     {
       // Metric #20: tool.call.duration top-K by p95
       id: "slowest_tools",
       title: "Slowest Tools (p95)",
+      subtitle: "table · current window",
       type: "table",
       unit: "seconds",
       data: {
@@ -621,39 +624,47 @@ export const mockLLMTokenUsage: ViewResponse = {
       title: "Total Tokens (24h)",
       type: "stat",
       unit: "tokens",
+      subtitle: "9.2M prompt + 5.6M completion",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "18472093"] }],
+        result: [{ metric: {}, value: [NOW, "14800000"] }],
       },
     },
     {
-      id: "input_tokens_24h",
-      title: "Input Tokens (24h)",
+      id: "token_rate",
+      title: "Token Rate",
       type: "stat",
-      unit: "tokens",
+      unit: "tokps",
+      subtitle: "▲ 12% from yesterday",
+      subtitleColor: "success",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "14291847"] }],
+        result: [{ metric: {}, value: [NOW, "171"] }],
       },
     },
     {
-      id: "output_tokens_24h",
-      title: "Output Tokens (24h)",
+      id: "estimated_cost_24h",
+      title: "Est. Cost (24h)",
       type: "stat",
-      unit: "tokens",
+      unit: "USD",
+      subtitle: "▲ $32 over budget",
+      subtitleColor: "warning",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "4180246"] }],
+        result: [{ metric: {}, value: [NOW, "284"] }],
       },
     },
     {
-      id: "avg_llm_latency_5m",
-      title: "Avg LLM Latency (5m)",
+      id: "avg_tokens_per_invocation",
+      title: "Avg Tokens/Invocation",
       type: "stat",
-      unit: "seconds",
+      unit: "short",
+      subtitle: "191 prompt + 116 completion",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "1.247"] }],
+        result: [{ metric: {}, value: [NOW, "307"] }],
       },
     },
 
@@ -661,7 +672,8 @@ export const mockLLMTokenUsage: ViewResponse = {
     {
       // Metric #2: gen_ai.client.token.usage → rate() by model
       id: "token_rate_by_model",
-      title: "Token Rate by Model",
+      title: "Tokens by Model",
+      subtitle: "tokens/s · 24h · stacked",
       type: "timeseries",
       unit: "tokps",
       data: {
@@ -686,6 +698,7 @@ export const mockLLMTokenUsage: ViewResponse = {
       // Metric #2: gen_ai.client.token.usage by token_type
       id: "prompt_vs_completion",
       title: "Input vs Output Tokens",
+      subtitle: "tokens/s · 24h",
       type: "timeseries",
       unit: "tokps",
       data: {
@@ -703,35 +716,12 @@ export const mockLLMTokenUsage: ViewResponse = {
       },
     },
 
-    // ── Row 3: LLM latency by model + Cost by model ──────────────────────
-    {
-      // Metric #1: gen_ai.client.operation.duration by model → histogram_quantile(0.95)
-      id: "llm_latency_by_model",
-      title: "LLM Latency p95 by Model",
-      type: "timeseries",
-      unit: "seconds",
-      data: {
-        resultType: "matrix",
-        result: [
-          {
-            metric: { model: "gpt-4o" },
-            values: stableSeries(ts24h, 1.85, 0.40),
-          },
-          {
-            metric: { model: "claude-sonnet-4-20250514" },
-            values: stableSeries(ts24h, 1.42, 0.35),
-          },
-          {
-            metric: { model: "gpt-4o-mini" },
-            values: stableSeries(ts24h, 0.62, 0.15),
-          },
-        ],
-      },
-    },
+    // ── Row 3: Cost by model + Top consumers ─────────────────────────────
     {
       // Derived: token usage × price per token, by model
       id: "cost_by_model",
       title: "Cost by Model (24h)",
+      subtitle: "USD · 24h",
       type: "bar",
       unit: "USD",
       data: {
@@ -744,11 +734,11 @@ export const mockLLMTokenUsage: ViewResponse = {
       },
     },
 
-    // ── Row 4: Top consumers table ────────────────────────────────────────
     {
       // Metric #2: gen_ai.client.token.usage by agent_name top-K
       id: "top_token_consumers",
       title: "Top Token Consumers (24h)",
+      subtitle: "table · by agent · 24h",
       type: "table",
       unit: "tokens",
       data: {
@@ -794,15 +784,18 @@ export const mockErrorBreakdown: ViewResponse = {
     refreshSec: 30,
   },
   panels: [
-    // ── Row 1: Stats ──────────────────────────────────────────────────────
+    // ── Row 1: Stats (3 columns) ────────────────────────────────────────
     {
       id: "total_errors_24h",
       title: "Total Errors (24h)",
       type: "stat",
       unit: "short",
+      subtitle: "▲ 23% from yesterday",
+      subtitleColor: "danger",
+      valueColor: "danger",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "1037"] }],
+        result: [{ metric: {}, value: [NOW, "1108"] }],
       },
     },
     {
@@ -810,6 +803,8 @@ export const mockErrorBreakdown: ViewResponse = {
       title: "Error Rate (5m)",
       type: "stat",
       unit: "percent",
+      subtitle: "SLO target: < 3%",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "2.34"] }],
@@ -817,24 +812,15 @@ export const mockErrorBreakdown: ViewResponse = {
     },
     {
       id: "most_common_error",
-      title: "Top Error Type",
+      title: "Most Common Error",
       type: "stat",
       unit: "short",
+      displayValue: "LLM timeout",
+      subtitle: "342 occurrences (31%)",
+      subtitleColor: "muted",
       data: {
         resultType: "vector",
-        result: [{ metric: { error_type: "timeout" }, value: [NOW, "412"] }],
-      },
-    },
-    {
-      id: "worst_agent_error_rate",
-      title: "Worst Agent Error Rate",
-      type: "stat",
-      unit: "percent",
-      data: {
-        resultType: "vector",
-        result: [
-          { metric: { agent_name: "code-reviewer" }, value: [NOW, "4.12"] },
-        ],
+        result: [{ metric: { error_type: "timeout" }, value: [NOW, "342"] }],
       },
     },
 
@@ -843,6 +829,7 @@ export const mockErrorBreakdown: ViewResponse = {
       // Metric #17/#8: agent.error.count / agent.invocation.count over time
       id: "error_rate_trend",
       title: "Error Rate Trend",
+      subtitle: "% · 24h · 5m windows",
       type: "timeseries",
       unit: "percent",
       data: {
@@ -857,40 +844,30 @@ export const mockErrorBreakdown: ViewResponse = {
       },
     },
     {
-      // Metric #17: agent.error.count by error_type over time
-      id: "errors_by_type_trend",
+      // Metric #17: agent.error.count by error_type, 24h totals
+      id: "errors_by_type",
       title: "Errors by Type",
-      type: "timeseries",
+      subtitle: "count · 24h",
+      type: "bar",
       unit: "short",
       data: {
-        resultType: "matrix",
+        resultType: "vector",
         result: [
-          {
-            metric: { error_type: "timeout" },
-            // Timeout spike during the support-triage incident
-            values: withSpike(stableSeries(ts24h, 0.30, 0.15), NOW - 2 * HOUR, 8),
-          },
-          {
-            metric: { error_type: "rate_limit" },
-            values: stableSeries(ts24h, 0.21, 0.12),
-          },
-          {
-            metric: { error_type: "tool_failure" },
-            values: stableSeries(ts24h, 0.11, 0.07),
-          },
-          {
-            metric: { error_type: "validation" },
-            values: stableSeries(ts24h, 0.07, 0.04),
-          },
+          { metric: { error_type: "timeout" }, value: [NOW, "342"] },
+          { metric: { error_type: "rate_limit" }, value: [NOW, "287"] },
+          { metric: { error_type: "tool_failure" }, value: [NOW, "156"] },
+          { metric: { error_type: "validation" }, value: [NOW, "93"] },
+          { metric: { error_type: "guardrail_block" }, value: [NOW, "61"] },
         ],
       },
     },
 
-    // ── Row 3: Errors by agent (bar) + Errors by stage (bar) ──────────────
+    // ── Row 3: Errors by agent (bar) + Top error messages (table) ────────
     {
       // Metric #17: agent.error.count by agent_name, increase 24h
       id: "errors_by_agent",
-      title: "Errors by Agent (24h)",
+      title: "Errors by Agent",
+      subtitle: "count · 24h",
       type: "bar",
       unit: "short",
       data: {
@@ -904,42 +881,10 @@ export const mockErrorBreakdown: ViewResponse = {
       },
     },
     {
-      // Metric #17: agent.error.count by error.stage
-      id: "errors_by_stage",
-      title: "Errors by Stage (24h)",
-      type: "bar",
-      unit: "short",
-      data: {
-        resultType: "vector",
-        result: [
-          { metric: { error_stage: "tool_call" }, value: [NOW, "389"] },
-          { metric: { error_stage: "generation" }, value: [NOW, "312"] },
-          { metric: { error_stage: "planning" }, value: [NOW, "204"] },
-          { metric: { error_stage: "guardrail" }, value: [NOW, "132"] },
-        ],
-      },
-    },
-
-    // ── Row 4: Errors by version (bar) + Top error messages (table) ───────
-    {
-      // Metric #17: agent.error.count by service.version
-      id: "errors_by_version",
-      title: "Errors by Version (24h)",
-      type: "bar",
-      unit: "short",
-      data: {
-        resultType: "vector",
-        result: [
-          { metric: { service_version: "v2.4.1" }, value: [NOW, "612"] },
-          { metric: { service_version: "v2.4.0" }, value: [NOW, "298"] },
-          { metric: { service_version: "v2.3.9" }, value: [NOW, "127"] },
-        ],
-      },
-    },
-    {
       // Derived from traces — top error messages by frequency
       id: "top_error_messages",
       title: "Top Error Messages",
+      subtitle: "table · 24h",
       type: "table",
       unit: "short",
       data: {
@@ -1011,9 +956,11 @@ export const mockCostTracking: ViewResponse = {
       title: "Est. Daily Cost",
       type: "stat",
       unit: "USD",
+      subtitle: "Budget: $250/day",
+      subtitleColor: "warning",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "253.82"] }],
+        result: [{ metric: {}, value: [NOW, "284"] }],
       },
     },
     {
@@ -1021,37 +968,45 @@ export const mockCostTracking: ViewResponse = {
       title: "Projected Monthly",
       type: "stat",
       unit: "USD",
+      subtitle: "$1,020 over budget",
+      subtitleColor: "danger",
+      valueColor: "danger",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "7614.60"] }],
+        result: [{ metric: {}, value: [NOW, "8520"] }],
       },
     },
     {
       id: "cost_per_invocation_avg",
-      title: "Avg Cost / Invocation",
+      title: "Cost per Invocation",
       type: "stat",
       unit: "USD",
+      subtitle: "▼ 8% optimized",
+      subtitleColor: "success",
       data: {
         resultType: "vector",
         result: [{ metric: {}, value: [NOW, "0.00526"] }],
       },
     },
     {
-      id: "cost_change_vs_yesterday",
-      title: "vs. Yesterday",
+      id: "cost_change_wow",
+      title: "Week-over-Week",
       type: "stat",
       unit: "percent",
+      subtitle: "Driven by support-bot",
+      subtitleColor: "warning",
       data: {
         resultType: "vector",
-        result: [{ metric: {}, value: [NOW, "+8.3"] }],
+        result: [{ metric: {}, value: [NOW, "+14"] }],
       },
     },
 
     // ── Row 2: Cost trend + Cost per invocation ───────────────────────────
     {
-      // Metric #63: gen_ai.cost.total → rate() cumulative over 24h
+      // Metric #63: gen_ai.cost.total → daily cost trend
       id: "cost_trend",
-      title: "Cumulative Cost (24h)",
+      title: "Daily Cost Trend",
+      subtitle: "USD · 7d",
       type: "timeseries",
       unit: "USD",
       data: {
@@ -1068,6 +1023,7 @@ export const mockCostTracking: ViewResponse = {
       // Metric #63/#8: gen_ai.cost.total / agent.invocation.count
       id: "cost_per_invocation",
       title: "Cost per Invocation",
+      subtitle: "USD · 7d · by agent",
       type: "timeseries",
       unit: "USD",
       data: {
@@ -1097,7 +1053,8 @@ export const mockCostTracking: ViewResponse = {
     {
       // Metric #63: gen_ai.cost.total by agent_name, increase 24h
       id: "cost_by_agent",
-      title: "Cost by Agent (24h)",
+      title: "Cost by Agent",
+      subtitle: "USD · today",
       type: "bar",
       unit: "USD",
       data: {
@@ -1113,7 +1070,8 @@ export const mockCostTracking: ViewResponse = {
     {
       // Metric #63: gen_ai.cost.total by model
       id: "cost_by_model",
-      title: "Cost by Model (24h)",
+      title: "Cost by Model",
+      subtitle: "USD · today",
       type: "bar",
       unit: "USD",
       data: {

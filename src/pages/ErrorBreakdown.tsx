@@ -1,10 +1,9 @@
 import { ViewPage } from '../components/layout/ViewPage';
 
 const LAYOUT = [
-  ['total_errors_24h', 'error_rate_overall', 'most_common_error', 'worst_agent_error_rate'],
-  ['error_rate_trend', 'errors_by_type_trend'],
-  ['errors_by_agent', 'errors_by_stage'],
-  ['errors_by_version', 'top_error_messages'],
+  ['total_errors_24h', 'error_rate_overall', 'most_common_error'],
+  ['error_rate_trend', 'errors_by_type'],
+  ['errors_by_agent', 'top_error_messages'],
 ];
 
 export function ErrorBreakdown() {

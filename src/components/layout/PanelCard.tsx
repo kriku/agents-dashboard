@@ -21,7 +21,12 @@ export function PanelCard({ panelId, panels, loading }: PanelCardProps) {
 
   return (
     <div className="panel-card" data-panel-id={panelId} data-panel-type={panel.type}>
-      {panel.type !== 'stat' && <div className="panel-card__title">{panel.title}</div>}
+      {panel.type !== 'stat' && (
+        <>
+          <div className="panel-card__title">{panel.title}</div>
+          {panel.subtitle && <div className="panel-card__subtitle">{panel.subtitle}</div>}
+        </>
+      )}
       <div className="panel-card__body">
         <PanelRenderer panel={panel} />
       </div>

@@ -56,4 +56,36 @@ describe('StatChart', () => {
     // Label should come before value in DOM
     expect(label!.compareDocumentPosition(value!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
+
+  it('renders subtitle text', () => {
+    render(<StatChart data={vectorData('12')} unit="short" title="Active Agents" subtitle="▲ 2 from yesterday" subtitleColor="success" />);
+    const subtitle = document.querySelector('.stat-subtitle');
+    expect(subtitle).toHaveTextContent('▲ 2 from yesterday');
+    expect(subtitle).toHaveClass('stat-subtitle--success');
+  });
+
+  it('renders subtitle without color class when no subtitleColor', () => {
+    render(<StatChart data={vectorData('12')} unit="short" title="Test" subtitle="some text" />);
+    const subtitle = document.querySelector('.stat-subtitle');
+    expect(subtitle).toHaveTextContent('some text');
+    expect(subtitle?.className).toBe('stat-subtitle');
+  });
+
+  it('applies valueColor class to stat value', () => {
+    render(<StatChart data={vectorData('2.3')} unit="percent" title="Error Rate" valueColor="danger" />);
+    const value = document.querySelector('.stat-value');
+    expect(value).toHaveClass('stat-value--danger');
+  });
+
+  it('renders displayValue instead of formatted numeric value', () => {
+    render(<StatChart data={vectorData('342')} unit="short" title="Most Common Error" displayValue="LLM timeout" />);
+    expect(screen.getByText('LLM timeout')).toBeInTheDocument();
+    expect(screen.queryByText('342')).not.toBeInTheDocument();
+  });
+
+  it('applies small class when displayValue is set', () => {
+    render(<StatChart data={vectorData('342')} unit="short" title="Test" displayValue="LLM timeout" />);
+    const value = document.querySelector('.stat-value');
+    expect(value).toHaveClass('stat-value--small');
+  });
 });
