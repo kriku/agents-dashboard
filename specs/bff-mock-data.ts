@@ -42,6 +42,21 @@ export interface ViewMeta {
   refreshSec: number;
 }
 
+/** Horizontal reference line on a timeseries chart */
+export interface Threshold {
+  value: number;
+  label: string;
+  color?: "danger" | "warning" | "success";
+}
+
+/** Point annotation (e.g. spike marker) on a timeseries chart */
+export interface Annotation {
+  timestamp: number;
+  value: number;
+  label: string;
+  color?: "danger" | "warning" | "success";
+}
+
 /** A single panel within a view */
 export interface Panel {
   id: string;
@@ -53,6 +68,8 @@ export interface Panel {
   subtitleColor?: "success" | "danger" | "warning" | "muted";
   valueColor?: "success" | "danger" | "warning";
   displayValue?: string;
+  thresholds?: Threshold[];
+  annotations?: Annotation[];
 }
 
 type PanelType = "timeseries" | "stat" | "gauge" | "heatmap" | "bar" | "table";
@@ -317,6 +334,7 @@ export const mockAgentOverview: ViewResponse = {
       subtitle: "% · 24h · aggregate",
       type: "timeseries",
       unit: "percent",
+      thresholds: [{ value: 3, label: "threshold 3%", color: "danger" }],
       data: {
         resultType: "matrix",
         result: [
@@ -851,6 +869,8 @@ export const mockErrorBreakdown: ViewResponse = {
       subtitle: "% · 24h · 5m windows",
       type: "timeseries",
       unit: "percent",
+      thresholds: [{ value: 3, label: "SLO 3%", color: "warning" }],
+      annotations: [{ timestamp: NOW - 2 * HOUR, value: 5.8, label: "spike 5.8%", color: "danger" }],
       data: {
         resultType: "matrix",
         result: [
@@ -1028,6 +1048,7 @@ export const mockCostTracking: ViewResponse = {
       subtitle: "USD · 7d",
       type: "timeseries",
       unit: "USD",
+      thresholds: [{ value: 250, label: "budget $250", color: "warning" }],
       data: {
         resultType: "matrix",
         result: [

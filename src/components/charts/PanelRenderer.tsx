@@ -13,7 +13,14 @@ interface PanelRendererProps {
 export function PanelRenderer({ panel }: PanelRendererProps) {
   switch (panel.type) {
     case 'timeseries':
-      return <TimeSeriesChart data={panel.data} unit={panel.unit} />;
+      return (
+        <TimeSeriesChart
+          data={panel.data}
+          unit={panel.unit}
+          thresholds={panel.thresholds}
+          annotations={panel.annotations}
+        />
+      );
     case 'stat':
       return (
         <StatChart

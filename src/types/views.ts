@@ -12,6 +12,21 @@ export interface ViewMeta {
   refreshSec: number;
 }
 
+/** Horizontal reference line on a timeseries chart */
+export interface Threshold {
+  value: number;
+  label: string;
+  color?: 'danger' | 'warning' | 'success';
+}
+
+/** Point annotation (e.g. spike marker) on a timeseries chart */
+export interface Annotation {
+  timestamp: number;
+  value: number;
+  label: string;
+  color?: 'danger' | 'warning' | 'success';
+}
+
 /** A single panel within a view */
 export interface Panel {
   id: string;
@@ -23,6 +38,8 @@ export interface Panel {
   subtitleColor?: 'success' | 'danger' | 'warning' | 'muted';
   valueColor?: 'success' | 'danger' | 'warning';
   displayValue?: string;
+  thresholds?: Threshold[];
+  annotations?: Annotation[];
 }
 
 export type PanelType = 'timeseries' | 'stat' | 'gauge' | 'heatmap' | 'bar' | 'table';
