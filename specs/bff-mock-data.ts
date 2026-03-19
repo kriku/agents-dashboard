@@ -109,6 +109,18 @@ const HOUR = 3600;
 const DAY = 86400;
 const STEP_1M = 60;
 
+/** Simple moving-average smoother to reduce point-to-point noise */
+function smooth(values: [number, string][], window = 5): [number, string][] {
+  const half = Math.floor(window / 2);
+  return values.map(([t], i) => {
+    const start = Math.max(0, i - half);
+    const end = Math.min(values.length, i + half + 1);
+    let sum = 0;
+    for (let j = start; j < end; j++) sum += Number(values[j]![1]);
+    return [t, (sum / (end - start)).toFixed(3)];
+  });
+}
+
 /** Generate timestamps from (now - rangeSec) to now at stepSec intervals */
 function timestamps(rangeSec: number, stepSec: number): number[] {
   const ts: number[] = [];
@@ -123,13 +135,14 @@ function trafficCurve(
   amplitude: number,
   noisePct = 0.08
 ): [number, string][] {
-  return ts.map((t) => {
+  const raw: [number, string][] = ts.map((t) => {
     const hourOfDay = ((t % DAY) / HOUR) % 24;
     // Peak at 14:00 UTC, trough at 04:00 UTC
     const sin = Math.sin(((hourOfDay - 4) / 24) * 2 * Math.PI);
     const value = base + amplitude * sin + base * noisePct * (Math.random() - 0.5);
     return [t, Math.max(0, value).toFixed(2)];
   });
+  return smooth(raw);
 }
 
 /** Monotonically increasing counter with jitter */
@@ -153,10 +166,11 @@ function stableSeries(
   center: number,
   variance: number
 ): [number, string][] {
-  return ts.map((t) => {
+  const raw: [number, string][] = ts.map((t) => {
     const value = center + variance * (Math.random() - 0.5);
     return [t, Math.max(0, value).toFixed(3)];
   });
+  return smooth(raw);
 }
 
 /**
