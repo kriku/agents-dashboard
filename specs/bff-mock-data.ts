@@ -327,37 +327,44 @@ export const mockAgentOverview: ViewResponse = {
         ],
       },
     },
-    {
-      // Metric #17: agent.error.count → rate() / rate(#8) * 100
-      id: "error_rate",
-      title: "Error Rate",
-      subtitle: "% · 24h · aggregate",
-      type: "timeseries",
-      unit: "percent",
-      thresholds: [{ value: 3, label: "threshold 3%", color: "danger" }],
-      data: {
-        resultType: "matrix",
-        result: [
-          {
-            metric: { agent_name: "order-processor" },
-            values: stableSeries(ts24h, 1.8, 1.2),
-          },
-          {
-            metric: { agent_name: "support-triage" },
-            // Spike ~2h ago: error rate jumped to ~5× for ~30 min
-            values: withSpike(stableSeries(ts24h, 3.2, 2.0), NOW - 2 * HOUR, 5),
-          },
-          {
-            metric: { agent_name: "doc-summarizer" },
-            values: stableSeries(ts24h, 0.9, 0.6),
-          },
-          {
-            metric: { agent_name: "code-reviewer" },
-            values: stableSeries(ts24h, 2.5, 1.5),
-          },
-        ],
-      },
-    },
+    // Metric #17: agent.error.count → rate() / rate(#8) * 100
+    // IIFE to compute spike peak for annotation
+    (() => {
+      const spikeValues = withSpike(stableSeries(ts24h, 3.2, 2.0), NOW - 2 * HOUR, 5);
+      const peak = spikeValues.reduce((best, cur) => Number(cur[1]) > Number(best[1]) ? cur : best);
+      const peakVal = Number(Number(peak[1]).toFixed(1));
+      return {
+        id: "error_rate",
+        title: "Error Rate",
+        subtitle: "% · 24h · aggregate",
+        type: "timeseries" as const,
+        unit: "percent" as const,
+        thresholds: [{ value: 3, label: "threshold 3%", color: "danger" as const }],
+        annotations: [{ timestamp: peak[0], value: peakVal, label: `spike ${peakVal}%`, color: "danger" as const }],
+        data: {
+          resultType: "matrix" as const,
+          result: [
+            {
+              metric: { agent_name: "order-processor" },
+              values: stableSeries(ts24h, 1.8, 1.2),
+            },
+            {
+              metric: { agent_name: "support-triage" },
+              // Spike ~2h ago: error rate jumped to ~5× for ~30 min
+              values: spikeValues,
+            },
+            {
+              metric: { agent_name: "doc-summarizer" },
+              values: stableSeries(ts24h, 0.9, 0.6),
+            },
+            {
+              metric: { agent_name: "code-reviewer" },
+              values: stableSeries(ts24h, 2.5, 1.5),
+            },
+          ],
+        },
+      };
+    })(),
 
     // ── Row 3: Errors by type (bar) + p95 latency (timeseries) ───────────
     {
@@ -379,36 +386,43 @@ export const mockAgentOverview: ViewResponse = {
         ],
       },
     },
-    {
-      // Metric #7: agent.invocation.duration → histogram_quantile(0.95)
-      id: "p95_latency",
-      title: "Execution Latency (p95)",
-      subtitle: "seconds · 24h · by agent",
-      type: "timeseries",
-      unit: "seconds",
-      data: {
-        resultType: "matrix",
-        result: [
-          {
-            metric: { agent_name: "order-processor" },
-            values: stableSeries(ts24h, 3.2, 1.0),
-          },
-          {
-            metric: { agent_name: "support-triage" },
-            // Correlated latency spike ~2h ago
-            values: withSpike(stableSeries(ts24h, 5.8, 1.5), NOW - 2 * HOUR, 3),
-          },
-          {
-            metric: { agent_name: "doc-summarizer" },
-            values: stableSeries(ts24h, 2.1, 0.8),
-          },
-          {
-            metric: { agent_name: "code-reviewer" },
-            values: stableSeries(ts24h, 8.4, 2.5),
-          },
-        ],
-      },
-    },
+    // Metric #7: agent.invocation.duration → histogram_quantile(0.95)
+    // IIFE to compute spike peak for annotation
+    (() => {
+      const spikeValues = withSpike(stableSeries(ts24h, 5.8, 1.5), NOW - 2 * HOUR, 3);
+      const peak = spikeValues.reduce((best, cur) => Number(cur[1]) > Number(best[1]) ? cur : best);
+      const peakVal = Number(Number(peak[1]).toFixed(1));
+      return {
+        id: "p95_latency",
+        title: "Execution Latency (p95)",
+        subtitle: "seconds · 24h · by agent",
+        type: "timeseries" as const,
+        unit: "seconds" as const,
+        annotations: [{ timestamp: peak[0], value: peakVal, label: `spike ${peakVal}s`, color: "danger" as const }],
+        data: {
+          resultType: "matrix" as const,
+          result: [
+            {
+              metric: { agent_name: "order-processor" },
+              values: stableSeries(ts24h, 3.2, 1.0),
+            },
+            {
+              metric: { agent_name: "support-triage" },
+              // Correlated latency spike ~2h ago
+              values: spikeValues,
+            },
+            {
+              metric: { agent_name: "doc-summarizer" },
+              values: stableSeries(ts24h, 2.1, 0.8),
+            },
+            {
+              metric: { agent_name: "code-reviewer" },
+              values: stableSeries(ts24h, 8.4, 2.5),
+            },
+          ],
+        },
+      };
+    })(),
 
     // ── Row 4: Step distribution (heatmap) + Guardrail pass/fail (bar) ────
     {
