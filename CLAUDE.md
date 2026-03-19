@@ -197,12 +197,21 @@ The frontend codes against this API surface. **Currently mocked** — response s
           }
         ]
       }
+    },
+    {
+      "id": "error_rate",
+      "title": "Error Rate",
+      "type": "timeseries",
+      "unit": "percent",
+      "thresholds": [{"value": 3, "label": "SLO 3%", "color": "warning"}],
+      "annotations": [{"timestamp": 1710723600, "value": 9.2, "label": "spike 9.2%", "color": "danger"}],
+      "data": { "..." : "..." }
     }
   ]
 }
 ```
 
-Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value). Valid `unit` values: `"reqps"`, `"seconds"`, `"bytes"`, `"percent"`, `"short"`, `"USD"`, `"tokens"`, `"tokps"`.
+Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value), `thresholds` (Threshold[] — horizontal reference lines), `annotations` (Annotation[] — point markers e.g. spikes). Threshold: `{value: number, label: string, color?: "danger"|"warning"|"success"}`. Annotation: `{timestamp: number, value: number, label: string, color?: "danger"|"warning"|"success"}`. Valid `unit` values: `"reqps"`, `"seconds"`, `"bytes"`, `"percent"`, `"short"`, `"USD"`, `"tokens"`, `"tokps"`.
 
 ---
 

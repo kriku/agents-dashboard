@@ -91,6 +91,8 @@ interface Panel {
   subtitleColor?: "success" | "danger" | "warning" | "muted";
   valueColor?: "success" | "danger" | "warning";
   displayValue?: string;
+  thresholds?: Threshold[];
+  annotations?: Annotation[];
 }
 
 type PanelData =
@@ -106,6 +108,19 @@ interface MatrixResult {
 interface VectorResult {
   metric: Record<string, string>;
   value: [number, string];     // instant vector: [timestamp, value]
+}
+
+interface Threshold {
+  value: number;
+  label: string;
+  color?: "danger" | "warning" | "success";
+}
+
+interface Annotation {
+  timestamp: number;
+  value: number;
+  label: string;
+  color?: "danger" | "warning" | "success";
 }
 ```
 

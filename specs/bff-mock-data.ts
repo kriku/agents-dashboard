@@ -862,26 +862,31 @@ export const mockErrorBreakdown: ViewResponse = {
     },
 
     // ── Row 2: Error rate trend + Errors by type ──────────────────────────
-    {
-      // Metric #17/#8: agent.error.count / agent.invocation.count over time
-      id: "error_rate_trend",
-      title: "Error Rate Trend",
-      subtitle: "% · 24h · 5m windows",
-      type: "timeseries",
-      unit: "percent",
-      thresholds: [{ value: 3, label: "SLO 3%", color: "warning" }],
-      annotations: [{ timestamp: NOW - 2 * HOUR, value: 5.8, label: "spike 5.8%", color: "danger" }],
-      data: {
-        resultType: "matrix",
-        result: [
-          {
-            metric: { aggregate: "all_agents" },
-            // Spike ~2h ago matching the support-triage incident
-            values: withSpike(stableSeries(ts24h, 2.3, 1.0), NOW - 2 * HOUR, 4),
-          },
-        ],
-      },
-    },
+    (() => {
+      const spikeTime = NOW - 2 * HOUR;
+      const values = withSpike(stableSeries(ts24h, 2.3, 1.0), spikeTime, 4);
+      const peak = values.reduce((best, cur) => Number(cur[1]) > Number(best[1]) ? cur : best);
+      const peakVal = Number(Number(peak[1]).toFixed(1));
+      return {
+        // Metric #17/#8: agent.error.count / agent.invocation.count over time
+        id: "error_rate_trend",
+        title: "Error Rate Trend",
+        subtitle: "% · 24h · 5m windows",
+        type: "timeseries" as const,
+        unit: "percent" as const,
+        thresholds: [{ value: 3, label: "SLO 3%", color: "warning" as const }],
+        annotations: [{ timestamp: peak[0], value: peakVal, label: `spike ${peakVal}%`, color: "danger" as const }],
+        data: {
+          resultType: "matrix" as const,
+          result: [
+            {
+              metric: { aggregate: "all_agents" },
+              values,
+            },
+          ],
+        },
+      };
+    })(),
     {
       // Metric #17: agent.error.count by error_type, 24h totals
       id: "errors_by_type",
