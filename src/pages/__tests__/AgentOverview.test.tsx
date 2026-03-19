@@ -26,7 +26,7 @@ describe('AgentOverview', () => {
 
   it('shows error state on server error', async () => {
     server.use(
-      http.get('/api/views/:viewId', () => HttpResponse.json({ error: 'fail' }, { status: 500 })),
+      http.get('*/api/views/:viewId', () => HttpResponse.json({ error: 'fail' }, { status: 500 })),
     );
     renderWithProviders(<AgentOverview />);
     await waitFor(() => {

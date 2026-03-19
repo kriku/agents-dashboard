@@ -19,21 +19,21 @@ There are two consumers of the same Grafana Mimir backend:
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ WRITE PATH                          READ PATH                   │
-│                                                                  │
-│ AI Agents                           Custom Dashboard (React)     │
-│   → OTel Collector (DaemonSet)        → BFF (Go)                │
-│     → API Gateway                       → Mimir Query Frontend   │
-│       → Mimir Distributor                 → Query Scheduler      │
-│         → Kafka (ingest storage)            → Queriers           │
-│           → Ingester                          → Ingesters (2h)   │
-│             → Object Storage (S3/GCS)         → Store Gateways   │
-│                                                                  │
-│                                     Grafana (Internal, VPN only) │
-│                                       → Mimir Query Frontend     │
-│                                         (same read path)         │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ WRITE PATH                          READ PATH                        │
+│                                                                       │
+│ AI Agents                           Custom Dashboard (React)          │
+│   → OTel Collector (DaemonSet)        → CDN (CloudFront + S3)        │
+│     → API Gateway                     → BFF (Go) @ api.monitoring.*  │
+│       → Mimir Distributor                 → Mimir Query Frontend     │
+│         → Kafka (ingest storage)            → Query Scheduler        │
+│           → Ingester                          → Queriers             │
+│             → Object Storage (S3/GCS)         → Store Gateways       │
+│                                                                       │
+│                                     Grafana (Internal, VPN only)      │
+│                                       → Mimir Query Frontend         │
+│                                         (same read path)             │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Tenant Hierarchy
@@ -160,57 +160,15 @@ The BFF derives `org-{org_id}__ws-{workspace_id}` from authenticated JWT claims.
 
 ## BFF API Contract
 
-The frontend codes against this API surface. **Currently mocked** — response shapes are defined in `src/mocks/bff-mock-data.ts`.
+The frontend codes against a small, purpose-built API — not a PromQL proxy. **Currently mocked** — response shapes are defined in `src/mocks/bff-mock-data.ts`. For Go structs, JSON wire format, and examples see `specs/04-bff-api-schemas.md`. TypeScript interfaces: `src/types/views.ts`.
 
-| Endpoint | Method | Purpose | Response |
-|----------|--------|---------|----------|
-| `/api/views` | GET | List all available views | `[{id, title, description}]` |
-| `/api/views/{view_id}` | GET | Fetch all panel data for a view | `{view: {...}, panels: [...]}` |
-| `/api/views/{view_id}/panels/{panel_id}` | GET | Fetch single panel (targeted refresh) | `{panel metadata + query results}` |
-| `/api/health` | GET | Liveness | `{status: "ok"}` |
-| `/api/ready` | GET | Readiness (Mimir reachable) | `{status: "ready"}` |
-
-### View Response Schema
-
-```json
-{
-  "view": {
-    "id": "agent-overview",
-    "title": "Agent Execution Overview",
-    "description": "Real-time view of agent health, error rates, and execution performance",
-    "refreshSec": 30
-  },
-  "panels": [
-    {
-      "id": "invocation_rate",
-      "title": "Invocation Rate",
-      "type": "timeseries",
-      "unit": "reqps",
-      "subtitle": "req/s · 24h · by agent",
-      "data": {
-        "resultType": "matrix",
-        "result": [
-          {
-            "metric": {"agent_name": "order-processor"},
-            "values": [[1710720000, "12.5"], [1710720060, "13.1"]]
-          }
-        ]
-      }
-    },
-    {
-      "id": "error_rate",
-      "title": "Error Rate",
-      "type": "timeseries",
-      "unit": "percent",
-      "thresholds": [{"value": 3, "label": "SLO 3%", "color": "warning"}],
-      "annotations": [{"timestamp": 1710723600, "value": 9.2, "label": "spike 9.2%", "color": "danger"}],
-      "data": { "..." : "..." }
-    }
-  ]
-}
-```
-
-Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value), `thresholds` (Threshold[] — horizontal reference lines), `annotations` (Annotation[] — point markers e.g. spikes). Threshold: `{value: number, label: string, color?: "danger"|"warning"|"success"}`. Annotation: `{timestamp: number, value: number, label: string, color?: "danger"|"warning"|"success"}`. Valid `unit` values: `"reqps"`, `"seconds"`, `"bytes"`, `"percent"`, `"short"`, `"USD"`, `"tokens"`, `"tokps"`.
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `GET /api/views` | GET | List available views → `ViewListItem[]` |
+| `GET /api/views/{view_id}` | GET | All panels for a view → `ViewResponse` |
+| `GET /api/views/{view_id}/panels/{panel_id}` | GET | Single panel → `Panel` |
+| `GET /api/health` | GET | Liveness |
+| `GET /api/ready` | GET | Readiness (Mimir reachable) |
 
 ---
 
@@ -316,12 +274,7 @@ The system monitors AI agents using 80 metrics across 9 categories, following OT
 
 ## Deployment
 
-### Frontend Deployment
-
-- 2 replicas, nginx serving static Vite build
-- Resources: 50m/64Mi requests, 200m/128Mi limits
-- Ingress: `/api` → BFF, `/` → Frontend (both under `monitoring.example.com`)
-- Kubernetes namespace: `monitoring-platform`
+The Vite build output is deployed to S3 and served via CDN (CloudFront) at `monitoring.example.com`. Content-hashed assets get immutable cache headers; `index.html` gets short TTL and is invalidated on deploy. The BFF is served at a separate domain (`api.monitoring.example.com`) — API requests go directly to the BFF ALB, not through the CDN. See `specs/02-frontend-deployment.md` for the full spec, deploy scripts, and rollback procedure.
 
 ---
 
@@ -438,9 +391,11 @@ These documents in the project define the full system design:
 
 - `specs/00-system-requirements.md` — Functional and non-functional requirements (v5.0, security-hardened)
 - `specs/01-metrics-catalogue.md` — Metrics catalogue: 80 metrics across 9 categories, OTel GenAI conventions
+- `specs/02-frontend-deployment.md` — Frontend deployment: S3 + CDN, push-based invalidation, deploy scripts, rollback
 - `specs/02-metrics-dashboard-read-path.md` — Read path: BFF + Frontend + Grafana (this is the primary implementation spec)
 - `specs/02-metrics-read-path.mermaid` — Dashboard read path diagram
 - `specs/02-metrics-write-path.mermaid` — Metrics ingestion pipeline diagram
 - `specs/03-test-specifications.md` — Frontend test specifications: test pyramid, ~164 test cases (unit/integration/E2E), fixture factories, coverage targets
+- `specs/04-bff-api-schemas.md` — BFF API schemas: Go structs, JSON wire format, examples
 - `src/mocks/bff-mock-data.ts` — Mock data with exact JSON response shapes (source of truth for frontend contracts and type definitions)
 - `mockups/*.html` — Static HTML mockups for all 5 dashboard views (AppShell layout, charts, grid structure)

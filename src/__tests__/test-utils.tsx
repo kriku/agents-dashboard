@@ -43,7 +43,7 @@ export function renderWithProviders(
  * Create an MSW handler that returns a mock view response.
  */
 export function mockViewEndpoint(viewId: string, response: ViewResponse) {
-  return http.get(`/api/views/${viewId}`, () => {
+  return http.get(`*/api/views/${viewId}`, () => {
     return HttpResponse.json(response);
   });
 }

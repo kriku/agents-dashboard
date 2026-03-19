@@ -25,80 +25,36 @@
 // =============================================================================
 
 // ---------------------------------------------------------------------------
-// 1. TYPE DEFINITIONS — mirrors BFF JSON response schema
+// 1. TYPE DEFINITIONS — re-exported from src/types/views.ts
 // ---------------------------------------------------------------------------
 
-/** Top-level response from GET /api/views/{view_id} */
-export interface ViewResponse {
-  view: ViewMeta;
-  panels: Panel[];
-}
+import type {
+  ViewResponse,
+  ViewMeta,
+  Threshold,
+  Annotation,
+  Panel,
+  PanelType,
+  PanelUnit,
+  PanelData,
+  MatrixResult,
+  VectorResult,
+  ViewListItem,
+} from '../types/views';
 
-/** View metadata header */
-export interface ViewMeta {
-  id: string;
-  title: string;
-  description: string;
-  refreshSec: number;
-}
-
-/** Horizontal reference line on a timeseries chart */
-export interface Threshold {
-  value: number;
-  label: string;
-  color?: "danger" | "warning" | "success";
-}
-
-/** Point annotation (e.g. spike marker) on a timeseries chart */
-export interface Annotation {
-  timestamp: number;
-  value: number;
-  label: string;
-  color?: "danger" | "warning" | "success";
-}
-
-/** A single panel within a view */
-export interface Panel {
-  id: string;
-  title: string;
-  type: PanelType;
-  unit: PanelUnit;
-  data: PanelData;
-  subtitle?: string;
-  subtitleColor?: "success" | "danger" | "warning" | "muted";
-  valueColor?: "success" | "danger" | "warning";
-  displayValue?: string;
-  thresholds?: Threshold[];
-  annotations?: Annotation[];
-}
-
-type PanelType = "timeseries" | "stat" | "gauge" | "heatmap" | "bar" | "table";
-type PanelUnit = "reqps" | "seconds" | "bytes" | "percent" | "short" | "USD" | "tokens" | "tokps";
-
-/** Prometheus-compatible result envelope */
-export type PanelData =
-  | { resultType: "matrix"; result: MatrixResult[] }
-  | { resultType: "vector"; result: VectorResult[] }
-  | { resultType: "scalar"; result: [number, string] };
-
-/** Time series (for timeseries, heatmap panels) */
-export interface MatrixResult {
-  metric: Record<string, string>;
-  values: [number, string][]; // [unix_epoch, value]
-}
-
-/** Instant vector (for stat, bar, table panels) */
-export interface VectorResult {
-  metric: Record<string, string>;
-  value: [number, string]; // [unix_epoch, value]
-}
-
-/** Listing response from GET /api/views */
-export interface ViewListItem {
-  id: string;
-  title: string;
-  description: string;
-}
+export type {
+  ViewResponse,
+  ViewMeta,
+  Threshold,
+  Annotation,
+  Panel,
+  PanelType,
+  PanelUnit,
+  PanelData,
+  MatrixResult,
+  VectorResult,
+  ViewListItem,
+};
 
 // ---------------------------------------------------------------------------
 // 2. HELPERS — generate realistic time series

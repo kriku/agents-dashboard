@@ -17,14 +17,16 @@ const viewMap: Record<string, ViewResponse> = {
   'cost-tracking': mockCostTracking,
 };
 
+// Wildcard prefix so handlers match regardless of VITE_API_BASE_URL origin
+// (e.g. both relative "/api/views" and absolute "https://api.monitoring.example.com/api/views").
 export const handlers = [
   // GET /api/views — list all views
-  http.get('/api/views', () => {
+  http.get('*/api/views', () => {
     return HttpResponse.json(mockViewList);
   }),
 
   // GET /api/views/:viewId — fetch view data
-  http.get('/api/views/:viewId', ({ params }) => {
+  http.get('*/api/views/:viewId', ({ params }) => {
     const { viewId } = params;
     const view = viewMap[viewId as string];
     if (!view) {
@@ -34,7 +36,7 @@ export const handlers = [
   }),
 
   // GET /api/views/:viewId/panels/:panelId — fetch single panel
-  http.get('/api/views/:viewId/panels/:panelId', ({ params }) => {
+  http.get('*/api/views/:viewId/panels/:panelId', ({ params }) => {
     const { viewId, panelId } = params;
     const view = viewMap[viewId as string];
     if (!view) {
@@ -48,12 +50,12 @@ export const handlers = [
   }),
 
   // GET /api/health
-  http.get('/api/health', () => {
+  http.get('*/api/health', () => {
     return HttpResponse.json({ status: 'ok' });
   }),
 
   // GET /api/ready
-  http.get('/api/ready', () => {
+  http.get('*/api/ready', () => {
     return HttpResponse.json({ status: 'ready' });
   }),
 ];

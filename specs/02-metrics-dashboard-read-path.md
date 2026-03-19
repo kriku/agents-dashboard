@@ -195,57 +195,7 @@ var AgentOverview = View{
 
 #### 3.1.3 API Surface
 
-The BFF exposes a small, purpose-built API — not a PromQL proxy:
-
-| Endpoint | Method | Purpose | Response |
-|---|---|---|---|
-| `/api/views` | GET | List all available views | `[{id, title, description}]` |
-| `/api/views/{view_id}` | GET | Fetch all panel data for a view | `{view metadata + panel results}` |
-| `/api/views/{view_id}/panels/{panel_id}` | GET | Fetch a single panel (targeted refresh) | `{panel metadata + query results}` |
-| `/api/health` | GET | Liveness check | `{status: "ok"}` |
-| `/api/ready` | GET | Readiness (Mimir reachable) | `{status: "ready"}` |
-
-**View response structure:**
-
-```json
-{
-  "view": {
-    "id": "agent-overview",
-    "title": "Agent Execution Overview",
-    "description": "Real-time view of agent health, error rates, and execution performance",
-    "refreshSec": 30
-  },
-  "panels": [
-    {
-      "id": "invocation_rate",
-      "title": "Invocation Rate",
-      "type": "timeseries",
-      "unit": "reqps",
-      "subtitle": "req/s · 24h · by agent",
-      "data": {
-        "resultType": "matrix",
-        "result": [
-          {
-            "metric": {"agent_name": "order-processor"},
-            "values": [[1710720000, "12.5"], [1710720060, "13.1"]]
-          }
-        ]
-      }
-    },
-    {
-      "id": "error_rate",
-      "title": "Error Rate",
-      "type": "timeseries",
-      "unit": "percent",
-      "thresholds": [{"value": 3, "label": "SLO 3%", "color": "warning"}],
-      "annotations": [{"timestamp": 1710723600, "value": 9.2, "label": "spike 9.2%", "color": "danger"}],
-      "data": { "..." : "..." }
-    }
-  ]
-}
-```
-
-Optional panel fields: `subtitle` (string), `subtitleColor` ("success"|"danger"|"warning"|"muted"), `valueColor` ("success"|"danger"|"warning"), `displayValue` (string — overrides formatted numeric value), `thresholds` (Threshold[] — horizontal reference lines), `annotations` (Annotation[] — point markers e.g. spikes). Threshold: `{value: number, label: string, color?: "danger"|"warning"|"success"}`. Annotation: `{timestamp: number, value: number, label: string, color?: "danger"|"warning"|"success"}`.
+The BFF exposes a small, purpose-built API — not a PromQL proxy. For endpoints, Go structs, JSON wire format, and examples see **`specs/04-bff-api-schemas.md`**.
 
 The BFF executes all panel queries for a view in parallel (bounded by per-workspace concurrency limit), merges results, and returns them in a single response. The frontend makes one request per view load and one request per panel on auto-refresh.
 
@@ -313,70 +263,7 @@ Browser                BFF                          Mimir Query Frontend
 
 #### 3.1.7 Deployment
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: metrics-bff
-  namespace: monitoring-platform
-spec:
-  replicas: 3
-  template:
-    spec:
-      containers:
-        - name: metrics-bff
-          image: platform/metrics-bff:latest
-          ports:
-            - containerPort: 8080  # API
-            - containerPort: 9090  # Prometheus metrics
-          env:
-            - name: MIMIR_QUERY_FRONTEND_URL
-              value: "http://mimir-query-frontend.mimir.svc.cluster.local:8080"
-            - name: JWT_JWKS_URL
-              value: "http://iam-service.auth.svc.cluster.local/.well-known/jwks.json"
-            - name: MAX_CONCURRENT_QUERIES_PER_WORKSPACE
-              value: "10"
-          resources:
-            requests: { cpu: 200m, memory: 128Mi }
-            limits: { cpu: 500m, memory: 256Mi }
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: metrics-bff-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: metrics-bff
-  minReplicas: 3
-  maxReplicas: 15
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target: { type: Utilization, averageUtilization: 70 }
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: metrics-bff-egress
-spec:
-  podSelector:
-    matchLabels: { app: metrics-bff }
-  policyTypes: [Egress]
-  egress:
-    - to:
-        - namespaceSelector: { matchLabels: { name: mimir } }
-      ports:
-        - port: 8080  # Mimir query-frontend only
-    - to:
-        - namespaceSelector: { matchLabels: { name: auth } }
-      ports:
-        - port: 8080  # IAM service for JWKS
-```
-
-Compared to v1.0: memory limits halved (no PromQL parser, no Redis client, no PostgreSQL driver) and NetworkPolicy drops PostgreSQL egress entirely.
+BFF deployment manifests (Deployment, HPA, NetworkPolicy) are out of scope for this repository. They will be defined in the BFF service repo.
 
 
 ### 3.2 Custom Dashboard Frontend
@@ -556,48 +443,7 @@ Platform Engineer                 Grafana                BFF + Frontend
 
 #### 3.2.7 Deployment
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: dashboard-frontend
-  namespace: monitoring-platform
-spec:
-  replicas: 2
-  template:
-    spec:
-      containers:
-        - name: frontend
-          image: platform/dashboard-frontend:latest
-          ports:
-            - containerPort: 80
-          resources:
-            requests: { cpu: 50m, memory: 64Mi }
-            limits: { cpu: 200m, memory: 128Mi }
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: dashboard-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-spec:
-  tls:
-    - hosts: [monitoring.example.com]
-      secretName: dashboard-tls
-  rules:
-    - host: monitoring.example.com
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service: { name: metrics-bff, port: { number: 8080 } }
-          - path: /
-            pathType: Prefix
-            backend:
-              service: { name: dashboard-frontend, port: { number: 80 } }
-```
+The frontend is deployed as static files to S3 + CDN (CloudFront) with push-based invalidation on every release. See `specs/02-frontend-deployment.md` for the full deployment spec, deploy scripts, cache policy, and rollback procedure.
 
 
 ### 3.3 Internal Grafana Instance
@@ -798,27 +644,31 @@ The server-owned query model eliminates several threat vectors present in a user
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ Kubernetes Cluster                                       │
-│                                                          │
+│ Kubernetes Cluster                                      │
+│                                                         │
 │  ┌──────────────────────┐    ┌───────────────────────┐  │
-│  │ monitoring-platform   │    │ mimir namespace        │  │
-│  │                       │    │                        │  │
-│  │  ┌─────────┐         │    │  ┌──────────────────┐  │  │
-│  │  │ BFF     │─────────┼────┼─>│ Query Frontend   │  │  │
-│  │  └─────────┘         │    │  │ (ClusterIP only) │  │  │
-│  │       ↑              │    │  └──────────────────┘  │  │
-│  │  ┌─────────┐         │    │                        │  │
-│  │  │Frontend │         │    └───────────────────────┘  │
-│  │  │(nginx)  │         │                               │
-│  │  └─────────┘         │    ┌───────────────────────┐  │
-│  └──────────────────────┘    │ grafana-internal       │  │
-│                              │  ┌─────────┐           │  │
-│                              │  │ Grafana │───────────┼──┘
-│                              │  └─────────┘           │
+│  │ monitoring-platform  │    │ mimir namespace       │  │
+│  │                      │    │                       │  │
+│  │  ┌─────────┐         │    │  ┌──────────────────┐ │  │
+│  │  │ BFF     │─────────┼────┼─>│ Query Frontend   │ │  │
+│  │  └─────────┘         │    │  │ (ClusterIP only) │ │  │
+│  │       ↑              │    │  └──────────────────┘ │  │
+│  │       │ ALB (public) │    │                       │  │
+│  └──────────────────────┘    └───────────────────────┘  │
+│                                                         │
+│  CDN (CloudFront) → S3 (static assets)                  │
+│  └─ /*        → S3 origin (index.html, assets/)         │
+│                                                         │
+│                              ┌───────────────────────┐  │
+│                              │ grafana-internal      │  │
+│                              │  ┌─────────┐          │  │
+│                              │  │ Grafana │──────────┼──┘
+│                              │  └─────────┘          │
 │                              └───────────────────────┘
-│                                                          │
-│  Ingress (TLS)                                           │
-│  ├─ monitoring.example.com → BFF + Frontend              │
+│                                                         │
+│  DNS                                                    │
+│  ├─ monitoring.example.com     → CDN (static assets)    │
+│  ├─ api.monitoring.example.com → BFF ALB (direct)       │
 │  └─ grafana-internal.example.com → Grafana (VPN only)   │
 └─────────────────────────────────────────────────────────┘
 ```

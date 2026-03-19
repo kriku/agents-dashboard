@@ -53,7 +53,7 @@ describe('useView', () => {
 
   it('handles server error', async () => {
     server.use(
-      http.get('/api/views/:viewId', () => {
+      http.get('*/api/views/:viewId', () => {
         return HttpResponse.json({ error: 'boom' }, { status: 500 });
       }),
     );
