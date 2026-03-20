@@ -19,6 +19,9 @@ export function renderWithProviders(
 ) {
   const { route = '/', ...renderOptions } = options ?? {};
 
+  // Ensure RequireAuth passes in tests
+  localStorage.setItem('auth_token', 'test-token');
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },

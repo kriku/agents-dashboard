@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
+import { RequireAuth } from './components/auth/RequireAuth';
+import { Login } from './pages/Login';
 import { AgentOverview } from './pages/AgentOverview';
 import { ToolCallPerformance } from './pages/ToolCallPerformance';
 import { LLMTokenUsage } from './pages/LLMTokenUsage';
@@ -21,12 +23,15 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<AgentOverview />} />
-            <Route path="tool-call-performance" element={<ToolCallPerformance />} />
-            <Route path="llm-token-usage" element={<LLMTokenUsage />} />
-            <Route path="error-breakdown" element={<ErrorBreakdown />} />
-            <Route path="cost-tracking" element={<CostTracking />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<RequireAuth />}>
+            <Route element={<AppShell />}>
+              <Route index element={<AgentOverview />} />
+              <Route path="tool-call-performance" element={<ToolCallPerformance />} />
+              <Route path="llm-token-usage" element={<LLMTokenUsage />} />
+              <Route path="error-breakdown" element={<ErrorBreakdown />} />
+              <Route path="cost-tracking" element={<CostTracking />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
