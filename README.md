@@ -15,9 +15,9 @@ Completely mocked deployment (github pages):
 ```bash
 git clone <repo-url> && cd agent-monitor
 pnpm install
-docker-compose up -d                                  # ClickHouse + BFF + Frontend
-pnpm --filter @agent-monitor/clickhouse seed          # generates 30 days of realistic data
-open http://localhost:3000                             # dashboard with live ClickHouse queries
+docker-compose up -d                           # ClickHouse + BFF + Frontend
+pnpm --filter @agent-monitor/clickhouse seed   # generates 30 days of realistic data
+open http://localhost:3000                     # dashboard with live ClickHouse queries
 ```
 
 The stack runs as three Docker containers: ClickHouse for storage, an Express.js BFF for API queries, and a React frontend behind nginx. Seed data covers 3 organizations, 5 workspaces, 10 agent types, 15 tools, and 4 LLM models with realistic daily patterns, error spikes, and version rollouts.
@@ -70,29 +70,29 @@ The server-owned query model eliminates SQL injection, cross-workspace query man
 agent-monitor/
 ├── docker-compose.yml
 ├── packages/
-│   ├── frontend/               # React 18+ / TypeScript / Vite
+│   ├── frontend/                   # React 18+ / TypeScript / Vite
 │   │   ├── src/
-│   │   │   ├── components/charts/   # uPlot, ECharts, Ant Design Table
+│   │   │   ├── components/charts/  # uPlot, ECharts, Ant Design Table
 │   │   │   ├── pages/              # 5 view pages
 │   │   │   ├── hooks/              # useView (TanStack Query), useAuth
 │   │   │   └── utils/              # Formatters, transforms
 │   │   └── __tests__/
-│   ├── bff/                    # Express.js API server
+│   ├── bff/                        # Express.js API server
 │   │   ├── src/
 │   │   │   ├── middleware/         # JWT auth, audit logging
-│   │   │   ├── queries/           # SQL per view (5 modules, ~35 queries)
-│   │   │   ├── clickhouse/        # Client wrapper, parameterized queries
-│   │   │   └── routes/            # /api/views/:viewId, /api/workspaces
+│   │   │   ├── queries/            # SQL per view (5 modules, ~35 queries)
+│   │   │   ├── clickhouse/         # Client wrapper, parameterized queries
+│   │   │   └── routes/             # /api/views/:viewId, /api/workspaces
 │   │   └── __tests__/
-│   ├── clickhouse/             # Schema and seed data
-│   │   ├── init/                  # CREATE TABLE DDL
-│   │   └── seed/                  # Deterministic data generator
-│   └── shared/                 # TypeScript types (ViewResponse, Panel)
-├── specs/                      # System design documents
+│   ├── clickhouse/                 # Schema and seed data
+│   │   ├── init/                   # CREATE TABLE DDL
+│   │   └── seed/                   # Deterministic data generator
+│   └── shared/                     # TypeScript types (ViewResponse, Panel)
+├── specs/                          # System design documents
 │   ├── 00-core-requirements.md
 │   ├── 01-development-plan.md
 │   └── 02-test-scenarios.md
-├── diagrams/                   # SVG architecture diagrams
+├── diagrams/                       # SVG architecture diagrams
 └── .github/workflows/ci.yml
 ```
 

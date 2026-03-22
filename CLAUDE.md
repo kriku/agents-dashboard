@@ -15,13 +15,13 @@ The architecture follows a **server-owned query model** — the browser never se
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │ WRITE PATH (Production Design)      READ PATH (Implemented)          │
-│                                                                       │
-│ AI Agents                           React Dashboard (port 3000)       │
+│                                                                      │
+│ AI Agents                           React Dashboard (port 3000)      │
 │   → OTel Collector (DaemonSet)        → nginx reverse proxy          │
 │     → API Gateway                       → Express.js BFF (port 3001) │
 │       → Kafka (partitioned by ws)         → ClickHouse (port 8123)   │
-│         → ClickHouse MergeTree                                        │
-│                                     Grafana (Internal, planned)       │
+│         → ClickHouse MergeTree                                       │
+│                                     Grafana (Internal, planned)      │
 │ (Mocked via seed data generator)      → ClickHouse datasource plugin │
 └──────────────────────────────────────────────────────────────────────┘
 ```
