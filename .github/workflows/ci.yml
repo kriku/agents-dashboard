@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,11 +21,61 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test
+      - run: pnpm --filter @agent-monitor/frontend run lint
+      - run: pnpm --filter @agent-monitor/bff run lint
+
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @agent-monitor/frontend test
+
+  test-bff:
+    name: BFF Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.3
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "wget --spider -q http://localhost:8123/ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply ClickHouse schema
+        run: |
+          for f in packages/clickhouse/init/*.sql; do
+            curl -s http://localhost:8123 --data-binary @"$f"
+          done
+      - name: Seed test data
+        run: pnpm --filter @agent-monitor/clickhouse run generate
+        env:
+          CLICKHOUSE_URL: http://localhost:8123
+      - name: Run BFF tests
+        run: pnpm --filter @agent-monitor/bff test
+        env:
+          CLICKHOUSE_URL: http://localhost:8123
 
   build:
     name: Build
-    needs: test
+    needs: [lint, test-frontend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +88,7 @@ jobs:
       - run: pnpm --filter @agent-monitor/frontend build
         env:
           BASE_PATH: /agents-dashboard/
-          VITE_MOCK_API: true
+          VITE_MOCK_API: 'true'
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/frontend/dist
