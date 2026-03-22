@@ -234,6 +234,8 @@ Create packages/bff/src/clickhouse/client.ts:
 
 ### Step 3.3 — View route handler
 
+**Status:** Done — `packages/bff/src/routes/views.ts` updated to use registry + `Promise.allSettled()` for parallel panel queries. Also added `packages/bff/src/queries/helpers.ts` with panel builder helpers (`statPanel`, `timeseriesPanel`, `barPanel`, `tablePanel`, `heatmapPanel`).
+
 Prompt Claude Code:
 
 ```
@@ -287,6 +289,8 @@ GET /api/workspaces — returns workspaces accessible to the authenticated user
 ```
 
 ### Step 3.4 — Agent overview queries
+
+**Status:** Done — `packages/bff/src/queries/agent-overview.ts` with 10 panels (active_agents, total_invocations_24h, error_rate_current, p95_latency_current, invocation_rate, error_rate, errors_by_type, p95_latency, step_distribution, guardrail_pass_fail). All queries use parameterized `{workspace_id: String}`.
 
 Prompt Claude Code:
 
@@ -385,6 +389,8 @@ that groups rows into the matrix format.
 
 ### Step 3.5 — Tool performance queries
 
+**Status:** Done — `packages/bff/src/queries/tool-performance.ts` with 8 panels. Includes custom percentile expansion for tool_latency_percentiles (p50/p95/p99 as separate series).
+
 Prompt Claude Code:
 
 ```
@@ -408,6 +414,8 @@ Same pattern as agent-overview. Panels:
 
 ### Step 3.6 — LLM token usage queries
 
+**Status:** Done — `packages/bff/src/queries/llm-token-usage.ts` with 8 panels. prompt_vs_completion uses custom dual-series expansion (input/output).
+
 Prompt Claude Code:
 
 ```
@@ -430,6 +438,8 @@ Panels:
 
 ### Step 3.7 — Error breakdown queries
 
+**Status:** Done — `packages/bff/src/queries/error-breakdown.ts` with 8 panels. error_budget_remaining computed from 1% SLO target over 30 days. most_common_error uses displayValue for the type name.
+
 Prompt Claude Code:
 
 ```
@@ -449,6 +459,8 @@ Panels:
 ```
 
 ### Step 3.8 — Cost tracking queries
+
+**Status:** Done — `packages/bff/src/queries/cost-tracking.ts` with 8 panels. projected_monthly uses linear projection from month-to-date. cost_change_wow uses CTE for this-week vs last-week comparison.
 
 Prompt Claude Code:
 
@@ -475,6 +487,8 @@ Panels:
 ```
 
 ### Step 3.9 — View registry
+
+**Status:** Done — `packages/bff/src/queries/registry.ts` with `viewRegistry` Map and `listViews()` helper. All 5 views registered with their query functions and refresh intervals.
 
 Prompt Claude Code:
 
@@ -516,13 +530,13 @@ GET /api/org/usage — aggregated metrics across all org workspaces.
 
 ### Step 3.11 — Acceptance criteria for Phase 3
 
-- [ ] `GET /api/auth/demo-token` returns a valid JWT
-- [ ] `GET /api/views` returns 5 views
-- [ ] `GET /api/views/agent-overview` with Bearer token returns all panels with data
-- [ ] `GET /api/views/agent-overview` without token returns 401
+- [x] `GET /api/auth/demo-token` returns a valid JWT
+- [x] `GET /api/views` returns 5 views
+- [x] `GET /api/views/agent-overview` with Bearer token returns all panels with data (10 panels)
+- [x] `GET /api/views/agent-overview` without token returns 401
 - [ ] `GET /api/views/agent-overview` with workspace_id=ws-acme-prod returns different data than ws-globex-main (tenant isolation)
-- [ ] All 5 view endpoints return data within 2 seconds
-- [ ] Partial failure: if one panel query fails, other panels still return data
+- [x] All 5 view endpoints return data within 2 seconds
+- [x] Partial failure: if one panel query fails, other panels still return data (Promise.allSettled)
 
 ---
 
