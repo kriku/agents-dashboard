@@ -43,6 +43,8 @@ jobs:
     services:
       clickhouse:
         image: clickhouse/clickhouse-server:24.3
+        env:
+          CLICKHOUSE_PASSWORD: test
         ports:
           - 8123:8123
           - 9000:9000
@@ -62,16 +64,18 @@ jobs:
       - name: Apply ClickHouse schema
         run: |
           for f in packages/clickhouse/init/*.sql; do
-            curl -s http://localhost:8123 --data-binary @"$f"
+            curl -s 'http://default:test@localhost:8123' --data-binary @"$f"
           done
       - name: Seed test data
         run: pnpm --filter @agent-monitor/clickhouse run generate
         env:
           CLICKHOUSE_URL: http://localhost:8123
+          CLICKHOUSE_PASSWORD: test
       - name: Run BFF tests
         run: pnpm --filter @agent-monitor/bff test
         env:
           CLICKHOUSE_URL: http://localhost:8123
+          CLICKHOUSE_PASSWORD: test
 
   build:
     name: Build

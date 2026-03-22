@@ -13,3 +13,4 @@ pnpm-debug.log*
 
 # ClickHouse data (docker volume)
 clickhouse-data/
+packages/frontend/test-results/
