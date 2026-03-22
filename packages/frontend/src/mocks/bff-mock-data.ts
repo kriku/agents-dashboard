@@ -3,9 +3,9 @@
 // =============================================================================
 //
 // Models the exact JSON shape the React frontend receives from
-// GET /api/views/{view_id}. All PromQL lives in the BFF — the frontend
+// GET /api/views/{view_id}. All SQL lives in the BFF — the frontend
 // never sees it. These mocks let us build wireframes against real data
-// shapes without a running Mimir backend.
+// shapes without a running ClickHouse backend.
 //
 // TOP 10 METRICS (all P0, ship-blocking):
 //

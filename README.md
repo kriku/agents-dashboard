@@ -8,12 +8,13 @@ The repository contains a **system design** (architecture documents, decision re
 
 ```bash
 git clone <repo-url> && cd agent-monitor
-docker-compose up -d
-docker compose run --rm seed     # generates 30 days of realistic data
-open http://localhost:3000        # dashboard with live ClickHouse queries
+pnpm install
+docker-compose up -d                                  # ClickHouse + BFF + Frontend
+pnpm --filter @agent-monitor/clickhouse seed          # generates 30 days of realistic data
+open http://localhost:3000                             # dashboard with live ClickHouse queries
 ```
 
-The stack runs entirely in Docker: ClickHouse for storage, an Express.js BFF for API queries, and a React frontend. Seed data covers 3 organizations, 5 workspaces, 10 agent types, 15 tools, and 4 LLM models with realistic daily patterns, error spikes, and version rollouts.
+The stack runs as three Docker containers: ClickHouse for storage, an Express.js BFF for API queries, and a React frontend behind nginx. Seed data covers 3 organizations, 5 workspaces, 10 agent types, 15 tools, and 4 LLM models with realistic daily patterns, error spikes, and version rollouts.
 
 ## Architecture overview
 
@@ -99,7 +100,7 @@ corepack enable
 pnpm install
 
 # Start ClickHouse + BFF + Frontend
-docker compose up -d
+docker-compose up -d
 
 # Seed sample data (30 days, 99K+ rows)
 pnpm --filter @agent-monitor/clickhouse seed

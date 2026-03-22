@@ -190,4 +190,4 @@ The full v5.2 specification contains 260 additional requirements across these ar
 - **Advanced schema governance** (12 requirements) — decomposition manifests, build-time code generation, CI-generated OTel Collector processors.
 - **Tenant lifecycle management** (14 requirements) — onboarding automation, offboarding with data destruction, tenant merge/split.
 
-Each Phase 2+ area has been researched, scoped, and specified. The technical architecture (Grafana LGTM stack, Kafka backbone, OTel Collector pipeline) was designed to support these extensions without rearchitecture.
+Each Phase 2+ area has been researched, scoped, and specified. The technical architecture (ClickHouse analytical backend, Kafka ingestion pipeline, OTel Collector pipeline) was designed to support these extensions without rearchitecture.

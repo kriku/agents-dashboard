@@ -5,6 +5,9 @@ const client = createClient({
   database: process.env.CLICKHOUSE_DB || 'agent_monitor',
   username: process.env.CLICKHOUSE_USER || 'default',
   password: process.env.CLICKHOUSE_PASSWORD || '',
+  clickhouse_settings: {
+    date_time_input_format: 'best_effort',
+  },
 });
 
 const WORKSPACE = 'ws-acme-prod';

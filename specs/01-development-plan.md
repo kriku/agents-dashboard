@@ -8,9 +8,9 @@
 
 ## Strategy: what we're building vs. what we're documenting
 
-The assignment evaluates two things separately: system design (interview 1) and vibe-coded implementation (interview 2). The system design is complete — 7 architecture documents, 6 mermaid diagrams, 41 core requirements, 80-metric catalog. The vibe-coded implementation needs to demonstrate production-plausible choices with a working end-to-end stack, while mocking the parts that require real infrastructure (Kafka, Mimir, OTel pipeline, IAM).
+The assignment evaluates two things separately: system design (interview 1) and vibe-coded implementation (interview 2). The system design is complete — 7 architecture documents, 6 mermaid diagrams, 41 core requirements, 80-metric catalog. The vibe-coded implementation needs to demonstrate production-plausible choices with a working end-to-end stack, while mocking the parts that require real infrastructure (Kafka, OTel pipeline, IAM).
 
-**Key simplification:** ClickHouse replaces the entire Grafana LGTM stack + Kafka backbone for the demo. This is architecturally honest — the ADR-001 document explicitly notes ClickHouse as "recommended as a complementary analytics store," and Langfuse, Helicone, and other AI observability platforms use ClickHouse as their primary store (documented in the OTel research). The production design uses Mimir for native multi-tenancy at scale; the demo uses ClickHouse for SQL simplicity and single-container deployment.
+**Key design choice:** ClickHouse as the analytical storage backend — the same engine used by Langfuse, Helicone, PostHog, and other AI observability platforms in production. Its columnar MergeTree engine handles both time-series ingestion and analytical queries in a single system, with native TTL, partitioning, and materialized views for retention and pre-aggregation. SQL is the most LLM-friendly query language, making every BFF query effectively vibe-codeable. The demo uses a single ClickHouse container; production scales via ClickHouse Keeper cluster with replicated tables and Kafka engine for ingestion.
 
 ---
 
@@ -784,7 +784,7 @@ Explain the monorepo layout.
 
 ## Design decisions
 Link to the full architecture decision records.
-Explain why ClickHouse for the demo vs Mimir for production.
+Explain why ClickHouse (same engine as Langfuse, Helicone, PostHog).
 
 ## Testing
 How to run tests. Coverage targets.
@@ -807,7 +807,7 @@ Copy all .md and .mermaid files into docs/:
 - metrics-dashboard-read-path-architecture.md
 - AI_Agent_Fleet_Metrics_Catalog_v2.md
 - Agent_SDK_and_Event_Decomposition_Architecture.md
-- Building_a_Custom_Observability_Dashboard_on_the_Grafana_LGTM_Stack.md
+- Building_a_Custom_Observability_Dashboard_on_ClickHouse.md
 - OpenTelemetry_Tracing_in_AI_Agent_Frameworks.md
 - Multi-Tenant_Metrics_Pipeline_Architecture.md
 - All .mermaid diagrams
