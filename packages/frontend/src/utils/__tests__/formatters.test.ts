@@ -179,4 +179,12 @@ describe('formatValue', () => {
   it('formats percent integer without decimals', () => {
     expect(formatValue(100, 'percent')).toBe('100%');
   });
+
+  it('formats bytes unit via formatBytes', () => {
+    expect(formatValue(1048576, 'bytes')).toContain('MB');
+  });
+
+  it('formats tokens unit via formatCompact', () => {
+    expect(formatValue(1500000, 'tokens')).toBe('1.5M');
+  });
 });
