@@ -4,7 +4,7 @@ import type { ViewListItem, ViewResponse } from '@agent-monitor/shared';
 const router: RouterType = Router();
 
 // ---------------------------------------------------------------------------
-// Stub data — replace with ClickHouse queries
+// Stub data — replace with ClickHouse queries in Steps 3.4-3.8
 // ---------------------------------------------------------------------------
 
 const viewList: ViewListItem[] = [
@@ -15,12 +15,12 @@ const viewList: ViewListItem[] = [
   { id: 'cost-tracking', title: 'Cost Tracking', description: 'Estimated costs by agent, model, and time period' },
 ];
 
-function stubView(id: string): ViewResponse | undefined {
+function stubView(id: string, _workspaceId: string): ViewResponse | undefined {
   const meta = viewList.find((v) => v.id === id);
   if (!meta) return undefined;
   return {
     view: { ...meta, refreshSec: 30 },
-    panels: [], // TODO: populate from ClickHouse
+    panels: [], // TODO: populate from ClickHouse using workspaceId
   };
 }
 
@@ -35,7 +35,7 @@ router.get('/', (_req, res) => {
 
 /** GET /api/views/:viewId — all panels for a view */
 router.get('/:viewId', (req, res) => {
-  const view = stubView(req.params.viewId);
+  const view = stubView(req.params.viewId, req.user!.workspace_id);
   if (!view) {
     res.status(404).json({ error: `View not found: ${req.params.viewId}` });
     return;
@@ -45,7 +45,7 @@ router.get('/:viewId', (req, res) => {
 
 /** GET /api/views/:viewId/panels/:panelId — single panel */
 router.get('/:viewId/panels/:panelId', (req, res) => {
-  const view = stubView(req.params.viewId);
+  const view = stubView(req.params.viewId, req.user!.workspace_id);
   if (!view) {
     res.status(404).json({ error: `View not found: ${req.params.viewId}` });
     return;
