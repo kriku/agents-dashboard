@@ -1,16 +1,46 @@
-1. intro about what this repository is about
-   (this repository is custom dashboard frontend for ai agent fleet, etc)
+# Agent Monitor
 
-2. you can check mocked dashboard - link to github pages
+Multi-tenant AI agent monitoring dashboard — monorepo with pnpm workspaces.
 
-3. intro about schema registry, why do we need it
-   00_schema_in_runtime.svg
+## Structure
 
-5. core system requirements which determined grafana mimir stack for metrics
-   (detailed report in specs/01_why_mimir.md)
+```
+packages/
+├── frontend/     # React SPA (Vite + TanStack Query + uPlot/ECharts)
+├── bff/          # Express.js API server (Backend-for-Frontend)
+├── clickhouse/   # Schema migrations + seed scripts
+└── shared/       # Shared TypeScript types
+```
 
-6. metrics ingestion pipeline
-   01_metrics_pipeline.svg
+## Quick Start
 
-7. metrics read path and access to metrics from custom dashboard vs internal grafana
-   02_custom_dashboard.svg
+```bash
+# Prerequisites: Node 20+, pnpm 9+
+corepack enable
+
+# Install dependencies
+pnpm install
+
+# Start ClickHouse + BFF
+docker compose up -d
+
+# Seed sample data
+pnpm --filter @agent-monitor/clickhouse seed
+
+# Start frontend dev server
+pnpm dev:frontend
+```
+
+## Development
+
+```bash
+pnpm dev:frontend    # Vite dev server (port 5173)
+pnpm dev:bff         # BFF with hot reload (port 3001)
+pnpm test            # Run all tests
+pnpm build           # Build all packages
+```
+
+## Specs
+
+- `specs/00-core-requirements.md` — Functional and non-functional requirements
+- `specs/01-development-plan.md` — Implementation roadmap

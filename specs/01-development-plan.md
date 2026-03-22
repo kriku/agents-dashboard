@@ -23,12 +23,12 @@ The assignment evaluates two things separately: system design (interview 1) and 
 Prompt Claude Code:
 
 ```
-Create a monorepo with this structure:
+Update repo to a monorepo with this structure:
 
 agent-monitor/
 ├── docker-compose.yml          # ClickHouse + BFF + frontend
 ├── packages/
-│   ├── frontend/               # React app (will paste existing code)
+│   ├── frontend/               # React app (move existed code)
 │   ├── bff/                    # Express.js API server
 │   ├── clickhouse/             # Schema migrations + seed scripts
 │   └── shared/                 # Shared TypeScript types
