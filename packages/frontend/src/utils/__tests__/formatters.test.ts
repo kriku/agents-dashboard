@@ -29,8 +29,8 @@ describe('formatDuration', () => {
     expect(formatDuration(3725)).toBe('1h 2m');
   });
 
-  it('formats zero as µs', () => {
-    expect(formatDuration(0)).toBe('0µs');
+  it('formats zero as 0s', () => {
+    expect(formatDuration(0)).toBe('0s');
   });
 
   it('formats integer seconds without decimals', () => {
@@ -48,7 +48,7 @@ describe('formatCompact', () => {
   });
 
   it('formats exactly 1000 as K', () => {
-    expect(formatCompact(1000)).toBe('1.0K');
+    expect(formatCompact(1000)).toBe('1K');
   });
 
   it('formats thousands as K', () => {

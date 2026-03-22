@@ -66,7 +66,7 @@ describe('formatting edge cases', () => {
   });
 
   it('formatCompact handles exactly 1M', () => {
-    expect(formatCompact(1000000)).toBe('1.0M');
+    expect(formatCompact(1000000)).toBe('1M');
   });
 
   it('formatCompact handles billions', () => {

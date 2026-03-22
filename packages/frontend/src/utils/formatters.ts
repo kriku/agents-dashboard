@@ -20,12 +20,13 @@ export function formatValue(value: number, unit: PanelUnit): string {
     case 'tokens':
       return formatCompact(value);
     case 'tokps':
-      return `${formatNumber(value, Number.isInteger(value) ? 0 : 1)} tok/s`;
+      return `${formatCompact(value)} tok/s`;
   }
 }
 
 /** Format a duration in seconds to a human-readable string */
 export function formatDuration(seconds: number): string {
+  if (seconds === 0) return '0s';
   if (seconds < 0.001) return `${(seconds * 1_000_000).toFixed(0)}µs`;
   if (seconds < 1) return `${(seconds * 1000).toFixed(0)}ms`;
   if (seconds < 60) return `${Number.isInteger(seconds) ? seconds.toFixed(0) : seconds.toFixed(2)}s`;
@@ -51,9 +52,9 @@ export function formatBytes(bytes: number): string {
 /** Format a number with compact notation (K, M, B) */
 export function formatCompact(value: number): string {
   if (Math.abs(value) < 1000) return formatNumber(value, Number.isInteger(value) ? 0 : undefined);
-  if (Math.abs(value) < 1_000_000) return `${(value / 1000).toFixed(1)}K`;
-  if (Math.abs(value) < 1_000_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
-  return `${(value / 1_000_000_000).toFixed(1)}B`;
+  if (Math.abs(value) < 1_000_000) return `${parseFloat((value / 1000).toFixed(1))}K`;
+  if (Math.abs(value) < 1_000_000_000) return `${parseFloat((value / 1_000_000).toFixed(1))}M`;
+  return `${parseFloat((value / 1_000_000_000).toFixed(1))}B`;
 }
 
 /** Format as USD currency */

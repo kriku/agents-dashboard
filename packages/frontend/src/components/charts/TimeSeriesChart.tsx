@@ -136,11 +136,12 @@ export function TimeSeriesChart({ data, unit, thresholds, annotations }: TimeSer
     axes: [
       {},
       {
-        size(self, values) {
-          if (!values) return 40;
-          const maxLabel = values.reduce((a, b) => (a.length > b.length ? a : b), "");
+        size(self, ticks) {
+          if (!ticks) return 40;
+          const formatted = ticks.map((v) => formatValue(Number(v), unit));
+          const maxLabel = formatted.reduce((a, b) => (a.length > b.length ? a : b), "");
           const ctx = self.ctx;
-          return ctx.measureText(maxLabel).width + 24;
+          return ctx.measureText(maxLabel).width + 34;
         },
         values: (_self, ticks) => ticks.map((v) => formatValue(v, unit)),
       },
