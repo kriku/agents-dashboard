@@ -83,115 +83,41 @@ Add a healthcheck for ClickHouse: wget --spider http://localhost:8123/ping
 
 ### Step 1.1 — Core tables
 
-Prompt Claude Code:
+**Status:** Done — `packages/clickhouse/init/001_create_tables.sql`
 
-```
-Create ClickHouse schema in packages/clickhouse/init/001_schema.sql.
+6 tables (plan originally called for 5; `guardrail_validations` added to back the `guardrail_pass_fail` panel). All tables use `workspace_id` as tenant isolation key.
 
-Design 5 tables for an AI agent monitoring platform. All tables must include:
-- workspace_id (String) — tenant isolation key, always first in ORDER BY
-- timestamp (DateTime64(3)) — event time
-
-Tables:
-
-1. agent_executions — one row per agent invocation
-   Columns: workspace_id, timestamp, agent_name (LowCardinality(String)),
-   agent_version (String), task_type (LowCardinality(String)),
-   status (Enum8('success'=1, 'failure'=2, 'timeout'=3, 'partial'=4)),
-   duration_ms (Float64), step_count (UInt16), llm_call_count (UInt16),
-   total_tokens (UInt32), estimated_cost_usd (Float64),
-   error_type (Nullable(LowCardinality(String))),
-   error_message (Nullable(String)),
-   codebase_version (LowCardinality(String)),
-   project_id (String)
-   
-   Engine: MergeTree()
-   PARTITION BY toYYYYMM(timestamp)
-   ORDER BY (workspace_id, agent_name, timestamp)
-   TTL timestamp + INTERVAL 90 DAY
-
-2. tool_calls — one row per tool invocation within an agent execution
-   Columns: workspace_id, timestamp, agent_name, tool_name (LowCardinality(String)),
-   tool_type (Enum8('function'=1, 'extension'=2, 'datastore'=3)),
-   duration_ms (Float64),
-   status (Enum8('success'=1, 'error'=2, 'vetoed'=3)),
-   error_type (Nullable(LowCardinality(String))),
-   retry_count (UInt8), input_tokens (UInt32), output_tokens (UInt32)
-   
-   Engine: MergeTree()
-   PARTITION BY toYYYYMM(timestamp)
-   ORDER BY (workspace_id, tool_name, timestamp)
-   TTL timestamp + INTERVAL 90 DAY
-
-3. llm_requests — one row per LLM API call
-   Columns: workspace_id, timestamp, agent_name,
-   model (LowCardinality(String)), provider (LowCardinality(String)),
-   prompt_tokens (UInt32), completion_tokens (UInt32),
-   total_tokens (UInt32), duration_ms (Float64),
-   cost_usd (Float64), finish_reason (LowCardinality(String)),
-   streaming (Bool), ttft_ms (Nullable(Float64))
-   
-   Engine: MergeTree()
-   PARTITION BY toYYYYMM(timestamp)
-   ORDER BY (workspace_id, model, timestamp)
-   TTL timestamp + INTERVAL 90 DAY
-
-4. agent_errors — denormalized error detail for the error breakdown view
-   Columns: workspace_id, timestamp, agent_name,
-   error_type (LowCardinality(String)),
-   error_message (String), error_stage (LowCardinality(String)),
-   codebase_version (LowCardinality(String)),
-   stack_trace (Nullable(String))
-   
-   Engine: MergeTree()
-   PARTITION BY toYYYYMM(timestamp)
-   ORDER BY (workspace_id, error_type, timestamp)
-   TTL timestamp + INTERVAL 90 DAY
-
-5. workspaces — dimension table for tenant metadata
-   Columns: workspace_id (String), org_id (String),
-   workspace_name (String), org_name (String),
-   tier (Enum8('free'=1, 'pro'=2, 'enterprise'=3)),
-   created_at (DateTime), settings (String — JSON)
-   
-   Engine: ReplacingMergeTree(created_at)
-   ORDER BY (org_id, workspace_id)
-
-Use LowCardinality for all string columns with bounded cardinality.
-Use Enum8 for status fields.
-Add comments on each table explaining its purpose.
-```
+| # | Table | Engine | Notes |
+|---|-------|--------|-------|
+| 1 | `agent_executions` | MergeTree | Includes `trace_id`, `span_id`, `model`, `provider`, `environment` (carried from old schema). Uses `input_tokens`/`output_tokens` naming. |
+| 2 | `tool_calls` | MergeTree | Added `tool_type` enum, `input_tokens`, `output_tokens`. |
+| 3 | `llm_requests` | MergeTree | Column naming: `input_tokens`/`output_tokens` (not `prompt_tokens`/`completion_tokens`) — aligned with frontend mock data `token_type: "input"/"output"`. Added `span_id`. |
+| 4 | `agent_errors` | MergeTree | As planned + `trace_id`. |
+| 5 | `guardrail_validations` | MergeTree | **NEW** — backs `guardrail_pass_fail` panel (metric #46). Columns: `guardrail_name`, `guardrail_result` (pass/fail/warn), `duration_ms`, `message`. |
+| 6 | `workspaces` | ReplacingMergeTree | As planned. |
 
 ### Step 1.2 — Materialized views for pre-aggregation (optional optimization)
 
-Prompt Claude Code:
+**Status:** Done — `packages/clickhouse/init/002_materialized_views.sql`
 
-```
-Create packages/clickhouse/init/002_materialized_views.sql with:
+3 materialized views (plan originally called for 2; `hourly_tool_stats` added for tool-call-performance panels). All use `AggregatingMergeTree` with `quantileState()` for mergeable percentile computation.
 
-1. hourly_agent_stats — pre-aggregated agent metrics per hour
-   AggregatingMergeTree with:
-   - countState() for invocation_count
-   - sumState() for total_tokens, total_cost
-   - quantileState(0.5, 0.95, 0.99) for duration_ms
-   - countIfState(status = 'failure') for error_count
-   GROUP BY workspace_id, agent_name, toStartOfHour(timestamp)
+| # | Target table | Source table | Key aggregates |
+|---|-------------|-------------|----------------|
+| 1 | `hourly_agent_stats` | `agent_executions` | `countState`, `countIfState(status IN failure/timeout)`, `sumState(total_tokens, cost)`, `quantileState(0.5/0.95/0.99)(duration_ms)` |
+| 2 | `hourly_model_usage` | `llm_requests` | `countState`, `sumState(input_tokens, output_tokens, total_tokens, cost)`, `quantileState(0.5/0.95/0.99)(duration_ms)` |
+| 3 | `hourly_tool_stats` | `tool_calls` | **NEW** — `countState`, `countIfState(status=error)`, `sumState(retry_count)`, `quantileState(0.5/0.95/0.99)(duration_ms)` |
 
-2. hourly_model_usage — pre-aggregated LLM usage per hour
-   AggregatingMergeTree with:
-   - sumState for prompt_tokens, completion_tokens, cost
-   GROUP BY workspace_id, model, provider, toStartOfHour(timestamp)
-
-These are optional performance optimizations. The raw tables work fine
-for demo-scale data. Include them to demonstrate production thinking.
-```
+Note: uses `input_tokens`/`output_tokens` (not `prompt_tokens`/`completion_tokens`), consistent with raw tables and frontend.
 
 ### Step 1.3 — Acceptance criteria for Phase 1
 
-- [ ] All 5 tables created successfully on `docker-compose up`
-- [ ] `DESCRIBE agent_executions` returns expected schema
-- [ ] `INSERT INTO agent_executions ...` with a test row succeeds
-- [ ] `SELECT count() FROM agent_executions WHERE workspace_id = 'ws-1'` returns 1
+- [x] Schema SQL files written: `001_create_tables.sql` (6 tables), `002_materialized_views.sql` (3 MVs + 3 target tables)
+- [x] Seed script updated to match new schema (`seed.ts` inserts into all 6 tables)
+- [x] All 6 tables + 3 MVs created successfully on `docker-compose up`
+- [x] `DESCRIBE agent_executions` returns expected schema (20 columns, correct types/enums)
+- [x] `INSERT INTO agent_executions ...` with a test row succeeds
+- [x] `SELECT count() FROM agent_executions WHERE workspace_id = 'ws-acme-prod'` returns 1
 
 ---
 

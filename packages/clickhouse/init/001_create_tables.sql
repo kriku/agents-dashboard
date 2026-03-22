@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS agent_monitor.agent_executions
     llm_call_count    UInt16,
     total_tokens      UInt32,
     estimated_cost_usd Float64,
-    error_type        Nullable(LowCardinality(String)),
+    error_type        LowCardinality(Nullable(String)),
     error_message     Nullable(String),
     codebase_version  LowCardinality(String),
     project_id        String,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS agent_monitor.tool_calls
     status            Enum8('success' = 1, 'error' = 2, 'vetoed' = 3),
     duration_ms       Float64,
     retry_count       UInt8,
-    error_type        Nullable(LowCardinality(String)),
+    error_type        LowCardinality(Nullable(String)),
     input_tokens      UInt32,
     output_tokens     UInt32
 )
