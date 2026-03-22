@@ -5,5 +5,5 @@
     "rootDir": ".",
     "noEmit": true
   },
-  "include": ["seed"]
+  "include": ["seed", "vitest.config.ts"]
 }
