@@ -36,18 +36,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @agent-monitor/frontend test -- --coverage
-      - name: Generate coverage badge
-        run: |
-          PCT=$(node -e "const s=require('./packages/frontend/coverage/coverage-summary.json');console.log(s.total.lines.pct)")
-          if [ "$(echo "$PCT >= 90" | bc)" -eq 1 ]; then COLOR=brightgreen
-          elif [ "$(echo "$PCT >= 80" | bc)" -eq 1 ]; then COLOR=green
-          elif [ "$(echo "$PCT >= 70" | bc)" -eq 1 ]; then COLOR=yellow
-          else COLOR=red; fi
-          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${PCT}%\",\"color\":\"${COLOR}\"}" > coverage-badge.json
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage-badge
-          path: coverage-badge.json
+          name: frontend-coverage
+          path: packages/frontend/coverage/coverage-summary.json
 
   test-bff:
     name: BFF Integration Tests
@@ -90,14 +82,18 @@ jobs:
           CLICKHOUSE_URL: http://localhost:8123
           CLICKHOUSE_PASSWORD: test
       - name: Run BFF tests
-        run: pnpm --filter @agent-monitor/bff test
+        run: pnpm --filter @agent-monitor/bff test -- --coverage
         env:
           CLICKHOUSE_URL: http://localhost:8123
           CLICKHOUSE_PASSWORD: test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bff-coverage
+          path: packages/bff/coverage/coverage-summary.json
 
   build:
     name: Build
-    needs: [lint, test-frontend]
+    needs: [lint, test-frontend, test-bff]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -113,8 +109,27 @@ jobs:
           VITE_MOCK_API: 'true'
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-badge
-          path: packages/frontend/dist
+          name: frontend-coverage
+          path: frontend-coverage
+      - uses: actions/download-artifact@v4
+        with:
+          name: bff-coverage
+          path: bff-coverage
+      - name: Generate combined coverage badge
+        run: |
+          PCT=$(node -e "
+            const fe = require('./frontend-coverage/coverage-summary.json').total.lines;
+            const bff = require('./bff-coverage/coverage-summary.json').total.lines;
+            const totalCovered = fe.covered + bff.covered;
+            const totalTotal = fe.total + bff.total;
+            const pct = totalTotal === 0 ? 0 : Math.round(totalCovered / totalTotal * 100);
+            console.log(pct);
+          ")
+          if [ "$(echo "$PCT >= 90" | bc)" -eq 1 ]; then COLOR=brightgreen
+          elif [ "$(echo "$PCT >= 80" | bc)" -eq 1 ]; then COLOR=green
+          elif [ "$(echo "$PCT >= 70" | bc)" -eq 1 ]; then COLOR=yellow
+          else COLOR=red; fi
+          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${PCT}%\",\"color\":\"${COLOR}\"}" > packages/frontend/dist/coverage-badge.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/frontend/dist

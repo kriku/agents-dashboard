@@ -8,5 +8,10 @@ export default defineConfig({
     env: {
       LOG_LEVEL: 'silent',
     },
+    coverage: {
+      reporter: ['text', 'lcov', 'json-summary'],
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/__tests__/**'],
+    },
   },
 });
