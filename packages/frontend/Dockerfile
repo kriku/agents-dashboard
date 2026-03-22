@@ -17,5 +17,6 @@ COPY packages/frontend/ packages/frontend/
 RUN pnpm --filter @agent-monitor/frontend run build
 
 FROM nginx:alpine
+COPY packages/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/packages/frontend/dist /usr/share/nginx/html
 EXPOSE 80
