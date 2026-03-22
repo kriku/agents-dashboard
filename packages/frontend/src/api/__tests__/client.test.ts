@@ -33,7 +33,7 @@ describe('apiFetch', () => {
       json: () => Promise.resolve({}),
     });
     await apiFetch('/api/test');
-    const callHeaders = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].headers;
+    const callHeaders = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0]![1].headers;
     expect(callHeaders).not.toHaveProperty('Authorization');
   });
 
@@ -43,7 +43,7 @@ describe('apiFetch', () => {
       json: () => Promise.resolve({}),
     });
     await apiFetch('/api/test');
-    const callHeaders = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].headers;
+    const callHeaders = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0]![1].headers;
     expect(callHeaders['Content-Type']).toBe('application/json');
   });
 

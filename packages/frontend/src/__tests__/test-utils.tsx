@@ -14,10 +14,11 @@ interface ProviderOptions extends Omit<RenderOptions, 'wrapper'> {
  * Render a component wrapped with all required providers
  * (QueryClient, MemoryRouter).
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function renderWithProviders(
   ui: ReactElement,
   options?: ProviderOptions,
-) {
+): ReturnType<typeof render> & { queryClient: QueryClient } {
   const { route = '/', ...renderOptions } = options ?? {};
 
   // Ensure RequireAuth passes in tests
@@ -39,10 +40,8 @@ export function renderWithProviders(
     );
   }
 
-  return {
-    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
-    queryClient,
-  };
+  const renderResult = render(ui, { wrapper: Wrapper, ...renderOptions });
+  return Object.assign(renderResult, { queryClient });
 }
 
 /**

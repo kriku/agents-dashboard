@@ -48,7 +48,7 @@ describe('useView', () => {
     const { result } = renderHook(() => useView('agent-overview'), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.panels.length).toBeGreaterThan(0);
-    expect(result.current.data?.panels[0].id).toBe('active_agents');
+    expect(result.current.data?.panels[0]!.id).toBe('active_agents');
   });
 
   it('handles server error', async () => {

@@ -9,7 +9,7 @@ vi.mock('echarts-for-react', () => ({
 
 import { HeatmapChart } from '../HeatmapChart';
 import { makeHeatmapPanel } from '../../../__fixtures__/factories';
-import type { PanelData } from '../../../types/views';
+import type { PanelData } from '@agent-monitor/shared';
 
 describe('HeatmapChart', () => {
   it('renders heatmap with le labels on y-axis', () => {

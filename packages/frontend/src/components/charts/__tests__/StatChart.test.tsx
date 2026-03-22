@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { StatChart } from '../StatChart';
-import type { PanelData } from '../../../types/views';
+import type { PanelData } from '@agent-monitor/shared';
 
 const NOW = Math.floor(Date.now() / 1000);
 

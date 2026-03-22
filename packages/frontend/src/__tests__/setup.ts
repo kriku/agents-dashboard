@@ -1,3 +1,4 @@
+import { vi, beforeAll, afterEach, afterAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { server } from '../mocks/server';
 
@@ -7,7 +8,7 @@ global.ResizeObserver = class ResizeObserver {
   constructor(cb: ResizeObserverCallback) {
     this.cb = cb;
   }
-  observe(target: Element) {
+  observe(_target: Element) {
     // Immediately fire with a mock entry so components get a width
     this.cb(
       [{ contentRect: { width: 800, height: 600 } } as ResizeObserverEntry],

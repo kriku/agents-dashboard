@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 
 import { BarChart } from '../BarChart';
 import { makeBarPanel } from '../../../__fixtures__/factories';
-import type { PanelData } from '../../../types/views';
+import type { PanelData } from '@agent-monitor/shared';
 
 describe('BarChart', () => {
   it('renders labels and values for each bar', () => {

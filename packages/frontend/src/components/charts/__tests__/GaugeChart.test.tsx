@@ -8,7 +8,7 @@ vi.mock('echarts-for-react', () => ({
 }));
 
 import { GaugeChart } from '../GaugeChart';
-import type { PanelData } from '../../../types/views';
+import type { PanelData } from '@agent-monitor/shared';
 
 const NOW = Math.floor(Date.now() / 1000);
 

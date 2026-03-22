@@ -15,7 +15,7 @@ vi.mock('uplot', () => ({ default: {} }));
 
 import { TimeSeriesChart } from '../TimeSeriesChart';
 import { makeTimeSeriesPanel } from '../../../__fixtures__/factories';
-import type { PanelData } from '../../../types/views';
+import type { PanelData } from '@agent-monitor/shared';
 
 describe('TimeSeriesChart', () => {
   it('passes AlignedData format [timestamps, ...series]', () => {

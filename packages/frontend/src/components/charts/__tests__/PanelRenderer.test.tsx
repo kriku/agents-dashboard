@@ -15,7 +15,7 @@ import {
   makeBarPanel,
   makeHeatmapPanel,
 } from '../../../__fixtures__/factories';
-import type { Panel } from '../../../types/views';
+import type { Panel } from '@agent-monitor/shared';
 
 describe('PanelRenderer', () => {
   it('renders TimeSeriesChart for timeseries type', () => {
