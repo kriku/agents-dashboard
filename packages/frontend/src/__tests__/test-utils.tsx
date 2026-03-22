@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { http, HttpResponse } from 'msw';
 import type { ReactElement } from 'react';
 import type { ViewResponse } from '@agent-monitor/shared';
+import { WorkspaceProvider } from '../contexts/WorkspaceContext';
 
 interface ProviderOptions extends Omit<RenderOptions, 'wrapper'> {
   route?: string;
@@ -31,7 +32,9 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        <WorkspaceProvider>
+          <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        </WorkspaceProvider>
       </QueryClientProvider>
     );
   }

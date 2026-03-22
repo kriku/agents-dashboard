@@ -15,9 +15,12 @@ export default defineConfig({
     },
   },
   server: {
-    // No /api proxy — API calls go directly to VITE_API_BASE_URL (separate domain).
-    // For local BFF development, set VITE_API_BASE_URL=http://localhost:8080.
-    // By default (unset), MSW mocks intercept all API calls.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
   test: {
     environment: 'jsdom',

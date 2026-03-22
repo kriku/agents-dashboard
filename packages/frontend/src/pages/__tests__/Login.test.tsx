@@ -41,6 +41,8 @@ describe('Login', () => {
     const user = userEvent.setup();
     renderLoginPage();
     await user.click(screen.getByRole('button', { name: /Sign in with SSO/ }));
-    expect(localStorage.getItem('auth_token')).toBe('mock-session-token');
+    await waitFor(() => {
+      expect(localStorage.getItem('auth_token')).toBe('test-demo-token');
+    });
   });
 });

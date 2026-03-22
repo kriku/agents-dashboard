@@ -49,6 +49,11 @@ export const handlers = [
     return HttpResponse.json(structuredClone(panel));
   }),
 
+  // GET /api/auth/demo-token — issue a test JWT
+  http.get('*/api/auth/demo-token', () => {
+    return HttpResponse.json({ token: 'test-demo-token' });
+  }),
+
   // GET /api/health
   http.get('*/api/health', () => {
     return HttpResponse.json({ status: 'ok' });
