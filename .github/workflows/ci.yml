@@ -64,7 +64,13 @@ jobs:
       - name: Apply ClickHouse schema
         run: |
           for f in packages/clickhouse/init/*.sql; do
-            curl -s 'http://default:test@localhost:8123' --data-binary @"$f"
+            # ClickHouse HTTP interface only accepts one statement per request.
+            # Split on semicolons and send each statement individually.
+            while IFS= read -r stmt; do
+              trimmed=$(echo "$stmt" | xargs)
+              [ -z "$trimmed" ] && continue
+              curl -sf 'http://default:test@localhost:8123' --data-binary "$stmt" || { echo "Failed: $stmt"; exit 1; }
+            done < <(sed 's/--.*//g' "$f" | tr '\n' ' ' | sed 's/;/;\n/g')
           done
       - name: Seed test data
         run: pnpm --filter @agent-monitor/clickhouse run generate
