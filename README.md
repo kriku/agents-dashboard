@@ -1,5 +1,8 @@
 # AI Agent Analytics Dashboard
 
+![CI](https://github.com/kriku/agents-dashboard/actions/workflows/ci.yml/badge.svg?branch=master)
+![Coverage](https://img.shields.io/endpoint?url=https://kriku.github.io/agents-dashboard/coverage-badge.json)
+
 A customer-facing organizational-level analytics dashboard for monitoring cloud-hosted AI agents. Provides real-time visibility into agent execution health, tool-call performance, LLM token usage, error breakdown, and cost tracking — scoped per workspace with tenant isolation enforced server-side.
 
 The repository contains a **system design** (architecture documents, decision records, metrics catalog) and a **working implementation** (ClickHouse + Express.js BFF + React dashboard) that can be spun up with a single command.

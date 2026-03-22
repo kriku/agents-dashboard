@@ -29,7 +29,7 @@ export default defineConfig({
     include: ['src/**/__tests__/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['src/__tests__/e2e/**', 'node_modules'],
     coverage: {
-      reporter: ['text', 'lcov'],
+      reporter: ['text', 'lcov', 'json-summary'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/__tests__/**', 'src/__fixtures__/**', 'src/mocks/**', 'src/vite-env.d.ts'],
     },

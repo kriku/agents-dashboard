@@ -35,7 +35,19 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @agent-monitor/frontend test
+      - run: pnpm --filter @agent-monitor/frontend test -- --coverage
+      - name: Generate coverage badge
+        run: |
+          PCT=$(node -e "const s=require('./packages/frontend/coverage/coverage-summary.json');console.log(s.total.lines.pct)")
+          if [ "$(echo "$PCT >= 90" | bc)" -eq 1 ]; then COLOR=brightgreen
+          elif [ "$(echo "$PCT >= 80" | bc)" -eq 1 ]; then COLOR=green
+          elif [ "$(echo "$PCT >= 70" | bc)" -eq 1 ]; then COLOR=yellow
+          else COLOR=red; fi
+          echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${PCT}%\",\"color\":\"${COLOR}\"}" > coverage-badge.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-badge
+          path: coverage-badge.json
 
   test-bff:
     name: BFF Integration Tests
@@ -99,6 +111,10 @@ jobs:
         env:
           BASE_PATH: /agents-dashboard/
           VITE_MOCK_API: 'true'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-badge
+          path: packages/frontend/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/frontend/dist
