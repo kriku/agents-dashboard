@@ -1,0 +1,226 @@
+<div style="font-family: var(--font-sans); color: var(--color-text-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+  <!-- Top bar -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary);">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 28px; height: 28px; border-radius: 6px; background: #534AB7; display: flex; align-items: center; justify-content: center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="#fff" stroke-width="1.5"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span style="font-weight: 500; font-size: 15px;">AgentWatch</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--color-text-secondary);">
+      <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; display: inline-block;"></span> Live</span>
+      <!-- SCOPE SELECTOR -->
+      <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: 6px; padding: 4px 10px; cursor: pointer;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2a2 2 0 100 4 2 2 0 000-4zM3 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM13 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM5.5 12.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5" stroke="var(--color-text-secondary)" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span style="font-weight: 500; color: var(--color-text-primary);">Acme Corp</span>
+        <span style="color: var(--color-text-tertiary);">&middot;</span>
+        <span style="color: var(--color-text-info);">All workspaces</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="var(--color-text-tertiary)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-background-info); display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 12px; color: var(--color-text-info);">JD</div>
+    </div>
+  </div>
+
+  <div style="display: flex; min-height: 720px;">
+    <!-- Sidebar -->
+    <div style="width: 200px; border-right: 0.5px solid var(--color-border-tertiary); padding: 12px 0; background: var(--color-background-secondary); flex-shrink: 0;">
+      <div style="padding: 0 12px; margin-bottom: 8px; font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.5px;">Views</div>
+      <div style="padding: 8px 16px; font-size: 13px; font-weight: 500; background: var(--color-background-primary); border-left: 2px solid #534AB7; color: var(--color-text-primary);">Agent overview</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary);">Tool call performance</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary);">LLM token usage</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary);">Error breakdown</div>
+      <div style="padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary);">Cost tracking</div>
+    </div>
+
+    <!-- Main content -->
+    <div style="flex: 1; padding: 20px 24px; overflow: auto; background: var(--color-background-tertiary);">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px;">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 500; margin: 0 0 4px;">Agent execution overview</h2>
+          <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">Real-time view of agent health, error rates, and execution performance &middot; Refreshes every 30s</p>
+        </div>
+        <!-- Org-wide badge -->
+        <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-info); padding: 4px 10px; border-radius: 6px; font-size: 12px; color: var(--color-text-info); font-weight: 500; white-space: nowrap;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v2M6 9v2M1 6h2M9 6h2M2.8 2.8l1.4 1.4M7.8 7.8l1.4 1.4M2.8 9.2l1.4-1.4M7.8 4.2l1.4-1.4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          Aggregated across 4 workspaces
+        </div>
+      </div>
+
+      <!-- Row 1: Stat cards (org-wide aggregated) -->
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px;">Active agents</div>
+          <div style="font-size: 26px; font-weight: 500;">47</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 2px;">Across 4 workspaces</div>
+        </div>
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px;">Total invocations (24h)</div>
+          <div style="font-size: 26px; font-weight: 500;">183K</div>
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 2px;">~127 req/s avg</div>
+        </div>
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px;">Error rate (current)</div>
+          <div style="font-size: 26px; font-weight: 500; color: var(--color-text-danger);">3.1%</div>
+          <div style="font-size: 11px; color: var(--color-text-danger); margin-top: 2px;">Worst: ws-staging 5.8%</div>
+        </div>
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 14px 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px;">p95 latency (current)</div>
+          <div style="font-size: 26px; font-weight: 500;">2.14s</div>
+          <div style="font-size: 11px; color: var(--color-text-warning); margin-top: 2px;">Worst: ws-staging 3.8s</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Two time-series charts — NOW BY WORKSPACE -->
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 16px;">
+        <!-- Invocation rate BY WORKSPACE -->
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Invocation rate</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 12px;">req/s &middot; 24h &middot; by workspace</div>
+          <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="12">160</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="42">120</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="72">80</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="102">40</text>
+            <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <!-- ws-prod (dominant) -->
+            <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="24,38 60,35 96,32 132,28 168,22 204,25 240,28 276,30 312,28"/>
+            <!-- ws-staging -->
+            <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,68 60,65 96,62 132,58 168,52 204,56 240,60 276,62 312,60"/>
+            <!-- ws-dev -->
+            <polyline fill="none" stroke="#D85A30" stroke-width="1.5" points="24,85 60,82 96,80 132,78 168,74 204,78 240,80 276,82 312,80"/>
+            <!-- ws-canary -->
+            <polyline fill="none" stroke="#D4537E" stroke-width="1.5" points="24,95 60,93 96,92 132,90 168,88 204,90 240,92 276,93 312,92"/>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="24" y="116">00:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="130" y="116">08:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="240" y="116">16:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="300" y="116">now</text>
+          </svg>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary);">
+            <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>ws-prod</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>ws-staging</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D85A30;margin-right:4px;vertical-align:middle;"></span>ws-dev</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D4537E;margin-right:4px;vertical-align:middle;"></span>ws-canary</span>
+          </div>
+        </div>
+        <!-- Error rate BY WORKSPACE -->
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Error rate</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 12px;">% &middot; 24h &middot; by workspace</div>
+          <svg width="100%" viewBox="0 0 320 120" style="display: block;">
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="12">8%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="42">6%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="72">4%</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="0" y="102">2%</text>
+            <line x1="20" y1="10" x2="320" y2="10" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="40" x2="320" y2="40" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="70" x2="320" y2="70" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <line x1="20" y1="100" x2="320" y2="100" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+            <!-- SLO line -->
+            <line x1="20" y1="55" x2="320" y2="55" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.6"/>
+            <text style="font-size:9px;fill:#BA7517" x="268" y="51">SLO 3%</text>
+            <!-- ws-staging (problem child — above SLO) -->
+            <polyline fill="none" stroke="#1D9E75" stroke-width="1.5" points="24,62 60,58 96,50 132,45 168,18 204,38 240,48 276,42 312,40"/>
+            <!-- ws-prod (healthy) -->
+            <polyline fill="none" stroke="#534AB7" stroke-width="1.5" points="24,82 60,80 96,78 132,76 168,65 204,72 240,78 276,76 312,74"/>
+            <!-- ws-dev -->
+            <polyline fill="none" stroke="#D85A30" stroke-width="1.5" points="24,88 60,86 96,84 132,82 168,72 204,80 240,85 276,84 312,82"/>
+            <!-- ws-canary -->
+            <polyline fill="none" stroke="#D4537E" stroke-width="1.5" points="24,92 60,90 96,88 132,86 168,78 204,84 240,88 276,86 312,85"/>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="24" y="116">00:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="130" y="116">08:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="240" y="116">16:00</text>
+            <text style="font-size:9px;fill:var(--color-text-tertiary)" x="300" y="116">now</text>
+          </svg>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary);">
+            <span><span style="display:inline-block;width:8px;height:2px;background:#534AB7;margin-right:4px;vertical-align:middle;"></span>ws-prod</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#1D9E75;margin-right:4px;vertical-align:middle;"></span>ws-staging</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D85A30;margin-right:4px;vertical-align:middle;"></span>ws-dev</span>
+            <span><span style="display:inline-block;width:8px;height:2px;background:#D4537E;margin-right:4px;vertical-align:middle;"></span>ws-canary</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Workspace comparison table + errors by type -->
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+        <!-- WORKSPACE COMPARISON TABLE (new in org-wide mode) -->
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Workspace comparison</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 12px;">table &middot; current</div>
+          <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+            <thead><tr style="border-bottom: 0.5px solid var(--color-border-tertiary);">
+              <th style="text-align: left; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary);">Workspace</th>
+              <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary);">Agents</th>
+              <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary);">Req/s</th>
+              <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary);">Errors</th>
+              <th style="text-align: right; padding: 6px 0; font-weight: 500; color: var(--color-text-secondary);">p95</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom: 0.5px solid var(--color-border-tertiary);"><td style="padding: 6px 0;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#534AB7;margin-right:6px;vertical-align:middle;"></span>ws-prod</td><td style="text-align: right; padding: 6px 0;">12</td><td style="text-align: right; padding: 6px 0;">48.2</td><td style="text-align: right; padding: 6px 0;">2.3%</td><td style="text-align: right; padding: 6px 0;">1.82s</td></tr>
+              <tr style="border-bottom: 0.5px solid var(--color-border-tertiary);"><td style="padding: 6px 0;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#1D9E75;margin-right:6px;vertical-align:middle;"></span>ws-staging</td><td style="text-align: right; padding: 6px 0;">12</td><td style="text-align: right; padding: 6px 0;">35.1</td><td style="text-align: right; padding: 6px 0; color: var(--color-text-danger);">5.8%</td><td style="text-align: right; padding: 6px 0; color: var(--color-text-danger);">3.80s</td></tr>
+              <tr style="border-bottom: 0.5px solid var(--color-border-tertiary);"><td style="padding: 6px 0;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D85A30;margin-right:6px;vertical-align:middle;"></span>ws-dev</td><td style="text-align: right; padding: 6px 0;">15</td><td style="text-align: right; padding: 6px 0;">28.4</td><td style="text-align: right; padding: 6px 0;">2.8%</td><td style="text-align: right; padding: 6px 0;">2.10s</td></tr>
+              <tr><td style="padding: 6px 0;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4537E;margin-right:6px;vertical-align:middle;"></span>ws-canary</td><td style="text-align: right; padding: 6px 0;">8</td><td style="text-align: right; padding: 6px 0;">15.3</td><td style="text-align: right; padding: 6px 0;">1.5%</td><td style="text-align: right; padding: 6px 0;">1.45s</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Errors by type (aggregated across all workspaces) -->
+        <div style="background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 16px; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Errors by type</div>
+          <div style="font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 12px;">count &middot; 24h &middot; all workspaces</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 90px; text-align: right;">LLM timeout</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden;"><div style="width: 72%; height: 100%; background: #E24B4A; border-radius: 3px; opacity: 0.8;"></div></div>
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 36px;">1,280</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 90px; text-align: right;">Tool failure</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden;"><div style="width: 48%; height: 100%; background: #D85A30; border-radius: 3px; opacity: 0.8;"></div></div>
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 36px;">854</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 90px; text-align: right;">Rate limited</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden;"><div style="width: 30%; height: 100%; background: #BA7517; border-radius: 3px; opacity: 0.8;"></div></div>
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 36px;">538</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 90px; text-align: right;">Max iterations</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden;"><div style="width: 15%; height: 100%; background: #534AB7; border-radius: 3px; opacity: 0.8;"></div></div>
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 36px;">265</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 90px; text-align: right;">Guardrail</span>
+              <div style="flex: 1; height: 18px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden;"><div style="width: 8%; height: 100%; background: #D4537E; border-radius: 3px; opacity: 0.8;"></div></div>
+              <span style="font-size: 11px; color: var(--color-text-secondary); width: 36px;">142</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scope selector dropdown (shown as overlay reference) -->
+  <div style="margin: 16px 20px; padding: 12px 16px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md);">
+    <div style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px;">Scope selector dropdown (expanded state)</div>
+    <div style="display: flex; flex-direction: column; gap: 2px; font-size: 13px;">
+      <div style="padding: 6px 10px; border-radius: 4px; background: var(--color-background-info); color: var(--color-text-info); font-weight: 500; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2a2 2 0 100 4 2 2 0 000-4zM3 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM13 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM5.5 12.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        All workspaces <span style="margin-left: auto; font-size: 11px; font-weight: 400; opacity: 0.7;">47 agents</span></div>
+      <div style="height: 1px; background: var(--color-border-tertiary); margin: 4px 0;"></div>
+      <div style="padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: var(--color-text-primary);">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#534AB7;"></span>
+        ws-prod <span style="margin-left: auto; font-size: 11px; color: var(--color-text-tertiary);">12 agents</span></div>
+      <div style="padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: var(--color-text-primary);">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#1D9E75;"></span>
+        ws-staging <span style="margin-left: auto; font-size: 11px; color: var(--color-text-tertiary);">12 agents</span></div>
+      <div style="padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: var(--color-text-primary);">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D85A30;"></span>
+        ws-dev <span style="margin-left: auto; font-size: 11px; color: var(--color-text-tertiary);">15 agents</span></div>
+      <div style="padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: var(--color-text-primary);">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4537E;"></span>
+        ws-canary <span style="margin-left: auto; font-size: 11px; color: var(--color-text-tertiary);">8 agents</span></div>
+    </div>
+  </div>
+</div>
