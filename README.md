@@ -6,6 +6,9 @@ The repository contains a **system design** (architecture documents, decision re
 
 ## Quick start
 
+Completely mocked deployment (github pages):
+[https://kriku.github.io/agents-dashboard/](https://kriku.github.io/agents-dashboard/)
+
 ```bash
 git clone <repo-url> && cd agent-monitor
 pnpm install
