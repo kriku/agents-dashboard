@@ -6,6 +6,7 @@
   "scripts": {
     "migrate": "echo 'Init scripts applied via docker-entrypoint-initdb.d (see init/)'",
     "seed": "tsx seed/seed.ts",
+    "generate": "tsx seed/generate.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

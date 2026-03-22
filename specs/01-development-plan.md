@@ -127,101 +127,35 @@ Note: uses `input_tokens`/`output_tokens` (not `prompt_tokens`/`completion_token
 
 ### Step 2.1 — Data generator script
 
-Prompt Claude Code:
+**Status:** Done — `packages/clickhouse/seed/generate.ts`
 
-```
-Create packages/clickhouse/seed/generate.ts — a TypeScript script that generates
-realistic monitoring data for the AI agent analytics dashboard.
+Deterministic (seeded PRNG, seed=42) generator producing 30 days of multi-workspace data. Label values aligned with frontend mock data (`bff-mock-data.ts`).
 
-Configuration:
-- 3 organizations: "Acme Corp" (org-acme), "Globex Inc" (org-globex), "Initech" (org-initech)
-- 5 workspaces total:
-  - org-acme: "Production" (ws-acme-prod, heavy usage), "Staging" (ws-acme-staging, light)
-  - org-globex: "Main" (ws-globex-main, medium)
-  - org-initech: "Production" (ws-initech-prod, medium), "Research" (ws-initech-research, light)
-- 10 agent types: ["order-processor", "support-classifier", "doc-summarizer",
-  "code-reviewer", "data-analyst", "email-drafter", "search-agent",
-  "onboarding-assistant", "report-generator", "compliance-checker"]
-- 15 tools: ["web_search", "sql_query", "file_read", "file_write", "api_call",
-  "code_execute", "email_send", "slack_notify", "jira_create", "pdf_parse",
-  "vector_search", "calculator", "calendar_check", "translate", "image_analyze"]
-- 4 LLM models with realistic pricing:
-  - claude-sonnet-4-20250514: input $3/MTok, output $15/MTok
-  - claude-haiku-3.5: input $0.80/MTok, output $4/MTok
-  - gpt-4o: input $2.50/MTok, output $10/MTok
-  - gpt-4o-mini: input $0.15/MTok, output $0.60/MTok
-- 3 codebase versions: "v2.3.1", "v2.4.0", "v2.5.0-beta"
+Changes from original plan:
+- Agent names: `support-classifier` → `support-triage` (matches frontend mock)
+- Tool names: `code_execute` → `code_exec` (matches frontend mock)
+- Model names: `claude-haiku-3.5` → `claude-haiku-4-5-20251001` (current model ID)
+- Added guardrail validation data (not in original plan, needed by `guardrail_pass_fail` panel)
+- Added `agent_errors` dual-write (insert into both `agent_executions` and `agent_errors` on failure)
+- ClickHouse `date_time_input_format: 'best_effort'` required for ISO timestamp parsing
 
-Time range: 30 days of data, ending at current timestamp.
-
-Patterns to generate:
-1. Daily cycle: usage peaks at 10am-2pm UTC, drops 60% overnight, 40% on weekends
-2. Growth trend: 15% week-over-week increase in total invocations
-3. Error patterns:
-   - Baseline error rate: 2-4% per agent
-   - One spike event: "api_call" tool errors jump to 35% for 4 hours on day 22
-     (simulates an upstream API outage)
-   - "code-reviewer" agent has 8% error rate (higher than average)
-4. Latency patterns:
-   - Normal: agent duration 2-15s depending on step count
-   - Tool latency: 50-500ms for most, "sql_query" is 200-2000ms
-   - LLM latency: 500-3000ms, proportional to token count
-5. Cost distribution:
-   - 70% of tokens go to claude-sonnet-4-20250514 and gpt-4o
-   - "doc-summarizer" and "report-generator" are the heaviest token consumers
-6. Version rollout: v2.3.1 dominant for first 20 days, v2.4.0 gradually
-   replaces it, v2.5.0-beta appears on day 25 at 5% traffic
-
-Data volume targets (for ws-acme-prod, the heavy workspace):
-- ~50,000 agent_executions over 30 days
-- ~200,000 tool_calls
-- ~150,000 llm_requests
-- ~2,500 agent_errors
-Scale other workspaces proportionally: medium = 30%, light = 10%.
-
-Output: Generate ClickHouse-compatible TSV files or use the ClickHouse
-HTTP interface to insert in batches of 10,000 rows.
-
-The generator should be deterministic (seeded random) for reproducible demos.
-Use a seed value of 42.
-```
+Run: `pnpm --filter @agent-monitor/clickhouse run generate`
 
 ### Step 2.2 — Workspace dimension data
 
-Prompt Claude Code:
-
-```
-In the same generator script, insert the workspace dimension records:
-
-INSERT INTO workspaces VALUES
-('ws-acme-prod', 'org-acme', 'Production', 'Acme Corp', 'enterprise', now(), '{}'),
-('ws-acme-staging', 'org-acme', 'Staging', 'Acme Corp', 'enterprise', now(), '{}'),
-('ws-globex-main', 'org-globex', 'Main', 'Globex Inc', 'pro', now(), '{}'),
-('ws-initech-prod', 'org-initech', 'Production', 'Initech', 'pro', now(), '{}'),
-('ws-initech-research', 'org-initech', 'Research', 'Initech', 'free', now(), '{}');
-```
+**Status:** Done — integrated into `generate.ts` (inserts 5 workspace records at start)
 
 ### Step 2.3 — Seed runner
 
-Prompt Claude Code:
-
-```
-Create packages/clickhouse/seed/run.sh that:
-1. Waits for ClickHouse to be healthy (curl loop on :8123/ping)
-2. Runs the generator: npx tsx packages/clickhouse/seed/generate.ts
-3. Prints summary: row counts per table per workspace
-
-Add a docker-compose profile "seed" that runs this after the main stack is up:
-  docker compose run --rm seed
-```
+Not implemented. Direct `pnpm run generate` is sufficient for local dev.
 
 ### Step 2.4 — Acceptance criteria for Phase 2
 
-- [ ] `SELECT count() FROM agent_executions` returns ~75,000+
-- [ ] `SELECT workspace_id, count() FROM agent_executions GROUP BY workspace_id` shows 5 workspaces with proportional volumes
-- [ ] `SELECT toStartOfHour(timestamp), count() FROM agent_executions WHERE workspace_id = 'ws-acme-prod' GROUP BY 1 ORDER BY 1` shows daily cycle pattern
-- [ ] `SELECT agent_name, countIf(status = 'failure') / count() as err_rate FROM agent_executions WHERE workspace_id = 'ws-acme-prod' GROUP BY agent_name ORDER BY err_rate DESC` shows code-reviewer with highest error rate
-- [ ] Data covers 30 days
+- [x] `SELECT count() FROM agent_executions` returns 99,420 (target: 75k+)
+- [x] 5 workspaces with proportional volumes: acme-prod 55k, globex/initech-prod ~17k each, staging/research ~5.5k each
+- [x] Hourly query shows daily cycle: peaks ~190/hr at midday, troughs ~20/hr overnight, ~40% weekend dip
+- [x] `code-reviewer` has highest error rate at 8.74% (target: ~8%), other agents 1.5-3.8%
+- [x] Data covers 30 days (2026-02-20 to 2026-03-22)
 
 ---
 

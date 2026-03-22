@@ -7,6 +7,7 @@ services:
     volumes:
       - clickhouse-data:/var/lib/clickhouse
       - ./packages/clickhouse/init:/docker-entrypoint-initdb.d
+      - ./packages/clickhouse/config/allow-remote.xml:/etc/clickhouse-server/users.d/allow-remote.xml:ro
     environment:
       CLICKHOUSE_DB: agent_monitor
       CLICKHOUSE_USER: default
