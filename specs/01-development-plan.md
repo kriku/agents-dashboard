@@ -70,10 +70,10 @@ Add a healthcheck for ClickHouse: wget --spider http://localhost:8123/ping
 
 ### Step 0.3 — Acceptance criteria for Phase 0
 
-- [ ] `docker-compose up` starts all 3 services
-- [ ] ClickHouse responds to `SELECT 1` on port 8123
-- [ ] BFF serves `GET /health` returning `{"status":"ok"}`
-- [ ] Frontend loads in browser at `localhost:3000`
+- [x] `docker-compose up` starts all 3 services
+- [x] ClickHouse responds to `SELECT 1` on port 8123
+- [x] BFF serves `GET /health` returning `{"status":"ok"}`
+- [x] Frontend loads in browser at `localhost:3000`
 
 ---
 

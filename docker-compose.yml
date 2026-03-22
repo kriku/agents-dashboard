@@ -1,18 +1,22 @@
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server:24.8-alpine
+    image: clickhouse/clickhouse-server:24.3
     ports:
-      - "${CLICKHOUSE_PORT:-8123}:8123"
-      - "${CLICKHOUSE_NATIVE_PORT:-9000}:9000"
+      - "8123:8123"
+      - "9000:9000"
     volumes:
       - clickhouse-data:/var/lib/clickhouse
-      - ./packages/clickhouse/migrations:/docker-entrypoint-initdb.d
+      - ./packages/clickhouse/init:/docker-entrypoint-initdb.d
     environment:
-      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-agent_monitor}
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DB: agent_monitor
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+    deploy:
+      resources:
+        limits:
+          memory: 2g
     healthcheck:
-      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8123/ping"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -22,13 +26,12 @@ services:
       context: .
       dockerfile: packages/bff/Dockerfile
     ports:
-      - "${BFF_PORT:-3001}:3001"
+      - "3001:3001"
     environment:
-      BFF_PORT: 3001
+      BFF_PORT: "3001"
       CLICKHOUSE_URL: http://clickhouse:8123
-      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-agent_monitor}
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DB: agent_monitor
+      JWT_SECRET: dev-secret
     depends_on:
       clickhouse:
         condition: service_healthy
@@ -38,7 +41,9 @@ services:
       context: .
       dockerfile: packages/frontend/Dockerfile
     ports:
-      - "5173:80"
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:3001
     depends_on:
       - bff
 

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "migrate": "echo 'Migrations applied via docker-entrypoint-initdb.d'",
+    "migrate": "echo 'Init scripts applied via docker-entrypoint-initdb.d (see init/)'",
     "seed": "tsx seed/seed.ts",
     "lint": "tsc --noEmit"
   },
